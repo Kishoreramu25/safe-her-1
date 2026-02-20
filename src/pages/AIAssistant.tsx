@@ -102,7 +102,7 @@ const AIAssistant: React.FC = () => {
             ]);
         } catch (err: any) {
             console.error('Error saving AI name:', err);
-            alert(`Failed to save AI name: ${err.message || "Unknown error"}. Make sure you ran the SQL command to add the 'ai_name' column.`);
+            alert("I couldn't save your assistant's name. Please check your connection and try again.");
         }
     };
 
@@ -112,7 +112,7 @@ const AIAssistant: React.FC = () => {
         if (!import.meta.env.VITE_GROQ_API_KEY) {
             const warningMsg: Message = {
                 id: Date.now(),
-                text: "API Key not detected. Please stop your 'npm run dev' and start it again to reload the configuration.",
+                text: "My secure AI brain is currently disconnected. Please check the server configuration.",
                 sender: 'ai',
                 timestamp: new Date()
             };
@@ -179,7 +179,7 @@ const AIAssistant: React.FC = () => {
             console.error('AI Error:', error);
             const errorMsg: Message = {
                 id: Date.now() + 1,
-                text: `Connection Error: ${error.message || "Unknown error"}. Check your API key and internet connection.`,
+                text: "My secure connection was interrupted. Please check your internet and try again.",
                 sender: 'ai',
                 timestamp: new Date()
             };
