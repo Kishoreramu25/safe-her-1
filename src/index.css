@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --color-primary: #2E3A87;
+  --color-secondary: #2FBFBC;
+  --color-background-light: #E6E9FF;
+  --color-background-dark: #101622;
+  --color-surface-dark: #2E3A87;
+  /* Adjusted default */
+  --color-border-dark: #2d3748;
+
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+}
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-background-light: var(--color-background-light);
+  --color-background-dark: var(--color-background-dark);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-border-dark: var(--color-border-dark);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+@layer utilities {
+  .ios-blur {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Global mobile optimization */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
