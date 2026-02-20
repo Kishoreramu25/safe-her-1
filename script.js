@@ -309,6 +309,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             document.getElementById('case-number-display').textContent = caseNum;
+
+            const platformNames = Array.from(platformChecks)
+                .filter(c => c.checked)
+                .map(c => c.closest('.platform-item').querySelector('.platform-name').textContent);
+
+            let message = "Your deletion request has been forwarded to ";
+            if (platformNames.length === 1) {
+                message += `<strong>${platformNames[0]}</strong>`;
+            } else if (platformNames.length === 2) {
+                message += `<strong>${platformNames[0]}</strong> and <strong>${platformNames[1]}</strong>`;
+            } else {
+                const last = platformNames.pop();
+                message += `<strong>${platformNames.join(', ')}</strong>, and <strong>${last}</strong>`;
+            }
+            message += " through their official mail addresses.";
+
+            const msgEl = document.getElementById('success-platform-msg');
+            if (msgEl) msgEl.innerHTML = message;
+
             showStep('success');
             document.querySelector('.wizard-header').style.display = 'none';
         });
