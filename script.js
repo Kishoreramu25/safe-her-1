@@ -140,6 +140,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    const platformKeywords = {
+        'google': ['google', 'youtube', 'goog'],
+        'facebook': ['facebook', 'fb.com'],
+        'instagram': ['instagram', 'insta', 'ig.me'],
+        'tiktok': ['tiktok'],
+        'x': ['x.com', 'twitter'],
+        'whatsapp': ['whatsapp', 'wa.me'],
+        'telegram': ['telegram', 't.me'],
+        'snapchat': ['snapchat', 'snap'],
+        'reddit': ['reddit'],
+        'pinterest': ['pinterest']
+    };
+
     function verifyLinks(urlInputs) {
         urlInputs.forEach((input, index) => {
             setTimeout(() => {
@@ -152,13 +165,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (url === '') {
                     statusEl.textContent = 'Not Provided';
                     statusEl.style.color = '#94a3b8';
-                } else if (url.includes(platformId)) {
-                    // Strict heuristic: link must contain the platform keyword
-                    statusEl.textContent = 'Search Found ✓';
-                    statusEl.style.color = '#16a34a';
                 } else {
-                    statusEl.textContent = 'Not Found ✗';
-                    statusEl.style.color = '#ef4444';
+                    const keywords = platformKeywords[platformId] || [platformId];
+                    const isMatch = keywords.some(k => url.includes(k));
+
+                    if (isMatch) {
+                        statusEl.textContent = 'Search Found ✓';
+                        statusEl.style.color = '#16a34a';
+                    } else {
+                        statusEl.textContent = 'Not Found ✗';
+                        statusEl.style.color = '#ef4444';
+                    }
                 }
 
                 // Enable continue button after last item
