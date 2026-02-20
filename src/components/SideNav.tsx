@@ -16,6 +16,7 @@ const SideNav: React.FC = () => {
         { path: '/functions', label: 'Functions', icon: 'grid_view' },
         { label: 'Take Action', icon: 'rocket_launch', url: 'https://safe-her-2.vercel.app/' },
         { path: '/settings', label: 'Settings', icon: 'settings' },
+        { label: 'Delete content', icon: 'delete', action: 'delete' },
     ];
 
     return (
@@ -34,7 +35,7 @@ const SideNav: React.FC = () => {
                 isOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-10 pointer-events-none"
             )}>
                 {/* Menu Card */}
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded-2xl shadow-2xl min-w-[180px] flex flex-col gap-1">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2 rounded-2xl shadow-2xl min-w-[190px] flex flex-col gap-1">
 
                     {/* Standard Items */}
                     {navItems.map((item) => (
@@ -43,6 +44,8 @@ const SideNav: React.FC = () => {
                             onClick={() => {
                                 if (item.url) {
                                     window.open(item.url, '_blank');
+                                } else if (item.action === 'delete') {
+                                    alert("Delete Post Triggered");
                                 } else {
                                     navigate(item.path || '');
                                 }
@@ -52,8 +55,10 @@ const SideNav: React.FC = () => {
                                 "flex items-center gap-3 p-3 rounded-xl transition-all text-left",
                                 isActive(item.path || '')
                                     ? "bg-primary/10 text-primary font-bold"
-                                    : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium",
-                                item.url && "text-primary"
+                                    : item.action === 'delete'
+                                        ? "hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 font-medium"
+                                        : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium",
+                                item.url && "text-primary font-bold"
                             )}
                         >
                             <span className="material-symbols-outlined" style={isActive(item.path || '') ? { fontVariationSettings: "'FILL' 1" } : {}}>
@@ -63,20 +68,6 @@ const SideNav: React.FC = () => {
                             {item.url && <span className="material-symbols-outlined text-xs ml-auto">open_in_new</span>}
                         </button>
                     ))}
-
-                    <div className="h-px bg-slate-100 dark:bg-slate-800 my-1"></div>
-
-                    {/* Delete Action */}
-                    <button
-                        onClick={() => {
-                            alert("Delete Post Triggered");
-                            setIsOpen(false);
-                        }}
-                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 font-medium transition-all text-left"
-                    >
-                        <span className="material-symbols-outlined">delete</span>
-                        <span className="text-sm">Delete content</span>
-                    </button>
 
                     {/* SOS Section */}
                     <div className="p-2 flex justify-center border-t border-slate-100 dark:border-slate-800 mt-1">
