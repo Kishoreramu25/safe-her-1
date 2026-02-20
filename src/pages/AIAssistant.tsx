@@ -32,6 +32,17 @@ const AIAssistant: React.FC = () => {
     const handleSend = async () => {
         if (!inputValue.trim()) return;
 
+        if (!import.meta.env.VITE_GROQ_API_KEY) {
+            const warningMsg: Message = {
+                id: Date.now(),
+                text: "API Key not detected. Please stop your 'npm run dev' and start it again to reload the configuration.",
+                sender: 'ai',
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, warningMsg]);
+            return;
+        }
+
         const userMsg: Message = {
             id: Date.now(),
             text: inputValue,
@@ -72,7 +83,13 @@ const AIAssistant: React.FC = () => {
             });
 
             const data = await response.json();
-            const aiText = data.choices?.[0]?.message?.content || "I'm having trouble connecting to my secure servers. Please try again in a moment.";
+
+            if (!response.ok) {
+                console.error('Groq API Error:', data);
+                throw new Error(data.error?.message || 'API request failed');
+            }
+
+            const aiText = data.choices?.[0]?.message?.content || "I'm having trouble understanding. Please rephrase.";
 
             const aiMsg: Message = {
                 id: Date.now() + 1,
