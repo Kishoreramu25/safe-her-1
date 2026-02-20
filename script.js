@@ -140,6 +140,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Platform Contact Emails
+    const platformEmails = {
+        'google': 'removals@google.com',
+        'facebook': 'legal@support.facebook.com',
+        'instagram': 'legal@support.instagram.com',
+        'tiktok': 'legal@tiktok.com',
+        'x': 'legal@x.com',
+        'whatsapp': 'grievance@whatsapp.com',
+        'telegram': 'legal@telegram.org',
+        'snapchat': 'legal@snapchat.com',
+        'reddit': 'legal@reddit.com',
+        'pinterest': 'legal@pinterest.com'
+    };
+
+    let latestCaseData = null;
+
     const platformKeywords = {
         'google': ['google', 'youtube', 'goog'],
         'facebook': ['facebook', 'fb.com'],
@@ -328,8 +344,75 @@ document.addEventListener('DOMContentLoaded', () => {
             const msgEl = document.getElementById('success-platform-msg');
             if (msgEl) msgEl.innerHTML = message;
 
+            latestCaseData = caseData;
+
             showStep('success');
             document.querySelector('.wizard-header').style.display = 'none';
+        });
+    }
+
+    // PDF Generation
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    if (downloadPdfBtn) {
+        downloadPdfBtn.addEventListener('click', () => {
+            if (!latestCaseData) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const margin = 20;
+            let y = 30;
+
+            // Header
+            doc.setFontSize(22);
+            doc.setTextColor(22, 101, 52); // SafeHer Green
+            doc.text('SafeHer India', margin, y);
+
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139);
+            y += 10;
+            doc.text(`System ID: SHI-AUTH-${latestCaseData.case_number.split('-')[1]}`, margin, y);
+            doc.text(`Date Issued: ${latestCaseData.date_created}`, margin, y + 5);
+
+            y += 20;
+            doc.setDrawColor(226, 232, 240);
+            doc.line(margin, y, 190, y);
+
+            y += 15;
+            doc.setFontSize(14);
+            doc.setTextColor(30, 41, 59);
+            doc.setFont("helvetica", "bold");
+            doc.text('Official Deletion Request Summary', margin, y);
+
+            latestCaseData.platforms.forEach((platformId) => {
+                const platformName = platformId.charAt(0).toUpperCase() + platformId.slice(1);
+                const contactEmail = platformEmails[platformId] || 'legal@support.com';
+                const link = latestCaseData.platform_links[platformId] || 'Not Provided';
+
+                if (y > 250) {
+                    doc.addPage();
+                    y = 30;
+                }
+
+                y += 15;
+                doc.setFontSize(12);
+                doc.setTextColor(30, 41, 59);
+                doc.setFont("helvetica", "bold");
+                doc.text(`TO: ${platformName} Legal/Compliance Team`, margin, y);
+
+                y += 7;
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(10);
+                doc.text(`Contact: ${contactEmail}`, margin, y);
+
+                y += 10;
+                const content = `Subject: Formal Request for Removal of Non-Consensual Intimate Imagery (Case #${latestCaseData.case_number})\n\nDear ${platformName} Support Team,\n\nWe are formally requesting the immediate removal of the content hosted at the following URL:\n\n${link}\n\nThis content consists of non-consensual intimate imagery/material which violates your community guidelines and international digital safety standards. SafeHer India has verified this request, and a digital fingerprint has been generated for case archival.\n\nWe request that you process this takedown immediately to prevent further harm. Please confirm the removal citing Case Number ${latestCaseData.case_number}.\n\nSincerely,\nDigital Safety Compliance Officer\nSafeHer India Automation System`;
+
+                const splitText = doc.splitTextToSize(content, 170);
+                doc.text(splitText, margin, y);
+                y += (splitText.length * 5) + 5;
+            });
+
+            doc.save(`SafeHer_Deletion_Request_${latestCaseData.case_number}.pdf`);
         });
     }
 });

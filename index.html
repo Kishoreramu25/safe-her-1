@@ -281,8 +281,18 @@
                         <div id="case-number-display"
                             style="font-weight: bold; font-size: 1.5rem; margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.8); border-radius: 8px; border: 1px dashed #16a34a;">
                         </div>
+                        <button class="btn btn--secondary" id="download-pdf-btn"
+                            style="margin-top: 15px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Download Request PDF
+                        </button>
                         <button class="btn btn--primary" onclick="location.reload()"
-                            style="margin-top: 30px; width: 100%;">Return to Home</button>
+                            style="margin-top: 10px; width: 100%;">Return to Home</button>
                     </div>
                 </div>
             </div>
@@ -297,6 +307,7 @@
         <p>&nbsp;</p>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="script.js"></script>
 </body>
 
