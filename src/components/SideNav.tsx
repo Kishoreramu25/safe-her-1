@@ -14,6 +14,7 @@ const SideNav: React.FC = () => {
         { path: '/dashboard', label: 'Home', icon: 'home' },
         { path: '/my-reports', label: 'My Reports', icon: 'history' },
         { path: '/functions', label: 'Functions', icon: 'grid_view' },
+        { label: 'Take Action', icon: 'rocket_launch', url: 'https://safe-her-2.vercel.app/' },
         { path: '/settings', label: 'Settings', icon: 'settings' },
     ];
 
@@ -38,22 +39,28 @@ const SideNav: React.FC = () => {
                     {/* Standard Items */}
                     {navItems.map((item) => (
                         <button
-                            key={item.path}
+                            key={item.label}
                             onClick={() => {
-                                navigate(item.path);
+                                if (item.url) {
+                                    window.open(item.url, '_blank');
+                                } else {
+                                    navigate(item.path || '');
+                                }
                                 setIsOpen(false);
                             }}
                             className={cn(
                                 "flex items-center gap-3 p-3 rounded-xl transition-all text-left",
-                                isActive(item.path)
+                                isActive(item.path || '')
                                     ? "bg-primary/10 text-primary font-bold"
-                                    : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium"
+                                    : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium",
+                                item.url && "text-primary"
                             )}
                         >
-                            <span className="material-symbols-outlined" style={isActive(item.path) ? { fontVariationSettings: "'FILL' 1" } : {}}>
+                            <span className="material-symbols-outlined" style={isActive(item.path || '') ? { fontVariationSettings: "'FILL' 1" } : {}}>
                                 {item.icon}
                             </span>
                             <span className="text-sm">{item.label}</span>
+                            {item.url && <span className="material-symbols-outlined text-xs ml-auto">open_in_new</span>}
                         </button>
                     ))}
 
