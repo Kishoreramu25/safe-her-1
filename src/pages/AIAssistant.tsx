@@ -34,28 +34,19 @@ const AIAssistant: React.FC = () => {
             }
 
             try {
-                const { data, error } = await supabase
+                const { data } = await supabase
                     .from('profiles')
                     .select('ai_name')
                     .eq('id', user.id)
                     .single();
 
-                if (error) {
-                    // If profile doesn't exist yet, it's fine, we'll prompt for naming
-                    setIsNamingMode(true);
-                } else if (data?.ai_name) {
+                if (data?.ai_name) {
                     setAiName(data.ai_name);
-                    setMessages([
-                        {
-                            id: 1,
-                            text: `Hello! I am ${data.ai_name}, your personalized AI Cyber Safety Assistant. How can I help you today?`,
-                            sender: 'ai',
-                            timestamp: new Date()
-                        }
-                    ]);
-                } else {
-                    setIsNamingMode(true);
+                    setTempName(data.ai_name);
                 }
+
+                // Always show the naming prompt every time the page is opened
+                setIsNamingMode(true);
             } catch (err) {
                 console.error('Error fetching AI name:', err);
                 setIsNamingMode(true);
@@ -214,6 +205,7 @@ const AIAssistant: React.FC = () => {
                             type="text"
                             value={tempName}
                             onChange={(e) => setTempName(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSaveName()}
                             placeholder="e.g. Guardian, Aegis, Sentinel..."
                             className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl py-4 px-4 text-base font-medium focus:ring-2 focus:ring-primary/20 transition-all mb-6"
                             autoFocus
