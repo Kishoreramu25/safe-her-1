@@ -27,7 +27,11 @@ const AIAssistant: React.FC = () => {
     // Initial Fetch: Get custom AI name from DB
     useEffect(() => {
         const fetchAiName = async () => {
-            if (!user) return;
+            if (!user) {
+                // Wait for auth to initialize before redirecting
+                // If loading is finished and still no user, then redirect
+                return;
+            }
 
             try {
                 const { data, error } = await supabase
@@ -36,9 +40,10 @@ const AIAssistant: React.FC = () => {
                     .eq('id', user.id)
                     .single();
 
-                if (error) throw error;
-
-                if (data?.ai_name) {
+                if (error) {
+                    // If profile doesn't exist yet, it's fine, we'll prompt for naming
+                    setIsNamingMode(true);
+                } else if (data?.ai_name) {
                     setAiName(data.ai_name);
                     setMessages([
                         {
@@ -61,6 +66,12 @@ const AIAssistant: React.FC = () => {
 
         fetchAiName();
     }, [user]);
+
+    // Handle Auth Redirect
+    const { loading: authLoading } = useAuth();
+    useEffect(() => {
+        if (!authLoading && !user) navigate('/auth');
+    }, [user, authLoading, navigate]);
 
     useEffect(() => {
         if (scrollRef.current) {

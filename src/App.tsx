@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { AuthProvider } from '@/context/AuthContext';
 import RoleSelection from '@/pages/RoleSelection';
 import Auth from '@/pages/Auth';
 import ComplaintStep1 from '@/pages/ComplaintStep1';
@@ -56,9 +57,11 @@ const AppContent = () => {
 function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
