@@ -5,14 +5,22 @@ import { supabase } from '@/lib/supabase';
 
 const ComplaintStep1: React.FC = () => {
     const navigate = useNavigate();
-    const [selectedPlatform, setSelectedPlatform] = useState<string>('');
+    const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
     const [category, setCategory] = useState<string>('');
     const [files, setFiles] = useState<File[]>([]);
     const [loading, setLoading] = useState(false);
 
+    const togglePlatform = (id: string) => {
+        setSelectedPlatforms(prev =>
+            prev.includes(id)
+                ? prev.filter(p => p !== id)
+                : [...prev, id]
+        );
+    };
+
     const handleContinue = async () => {
-        if (!selectedPlatform || !category) {
-            alert('Please select a platform and category.');
+        if (selectedPlatforms.length === 0 || !category) {
+            alert('Please select at least one platform and a category.');
             return;
         }
 
@@ -41,7 +49,7 @@ const ComplaintStep1: React.FC = () => {
 
             // 2. Save Step 1 data to session storage
             const step1Data = {
-                platform: selectedPlatform,
+                platforms: selectedPlatforms,
                 category: category,
                 evidence_count: files.length,
                 evidence_urls: uploadedUrls
@@ -90,7 +98,7 @@ const ComplaintStep1: React.FC = () => {
                 <section>
                     <div className="mb-4">
                         <h2 className="text-xl font-bold">Where did this happen?</h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Select the platform where the incident occurred.</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Select all platforms where the incident occurred.</p>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         {[
@@ -100,10 +108,10 @@ const ComplaintStep1: React.FC = () => {
                         ].map((platform) => (
                             <button
                                 key={platform.id}
-                                onClick={() => setSelectedPlatform(platform.id)}
+                                onClick={() => togglePlatform(platform.id)}
                                 className={cn(
                                     "group relative aspect-square rounded-xl overflow-hidden border-2 transition-all",
-                                    selectedPlatform === platform.id ? "border-primary ring-2 ring-primary/20" : "border-transparent hover:border-primary",
+                                    selectedPlatforms.includes(platform.id) ? "border-primary ring-2 ring-primary/20" : "border-transparent hover:border-primary",
                                     "bg-slate-100 dark:bg-slate-800"
                                 )}
                             >
@@ -114,7 +122,7 @@ const ComplaintStep1: React.FC = () => {
                                 <div className="absolute bottom-3 left-3 flex items-center gap-2">
                                     <span className="text-white font-bold text-sm">{platform.name}</span>
                                 </div>
-                                {selectedPlatform === platform.id && (
+                                {selectedPlatforms.includes(platform.id) && (
                                     <div className="absolute top-2 right-2 bg-primary rounded-full">
                                         <span className="material-symbols-outlined text-white text-lg font-bold p-0.5">check</span>
                                     </div>
@@ -123,19 +131,19 @@ const ComplaintStep1: React.FC = () => {
                         ))}
 
                         <button
-                            onClick={() => setSelectedPlatform('other')}
+                            onClick={() => togglePlatform('other')}
                             className={cn(
                                 "group relative aspect-square rounded-xl overflow-hidden border-2 transition-all",
-                                selectedPlatform === 'other' ? "border-primary bg-primary/10 dark:bg-primary/20" : "border-transparent bg-slate-100 dark:bg-slate-800 hover:border-primary"
+                                selectedPlatforms.includes('other') ? "border-primary bg-primary/10 dark:bg-primary/20" : "border-transparent bg-slate-100 dark:bg-slate-800 hover:border-primary"
                             )}
                         >
                             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
                                 <span className="material-symbols-outlined text-primary text-3xl">more_horiz</span>
                                 <span className="text-primary font-bold text-sm">Other Platform</span>
                             </div>
-                            {selectedPlatform === 'other' && (
-                                <div className="absolute top-2 right-2">
-                                    <span className="material-symbols-outlined text-primary text-lg font-bold">check_circle</span>
+                            {selectedPlatforms.includes('other') && (
+                                <div className="absolute top-2 right-2 bg-primary rounded-full">
+                                    <span className="material-symbols-outlined text-white text-lg font-bold p-0.5">check</span>
                                 </div>
                             )}
                         </button>

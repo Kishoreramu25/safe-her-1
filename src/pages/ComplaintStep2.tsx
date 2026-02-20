@@ -6,13 +6,29 @@ const ComplaintStep2: React.FC = () => {
     const [incidentDesc, setIncidentDesc] = React.useState('');
     const [suspectInfo, setSuspectInfo] = React.useState({ name: '', handle: '' });
     const [victimDetails, setVictimDetails] = React.useState({ alias: '', gender: '', age: '', relation: 'Self' });
+    const [platformLinks, setPlatformLinks] = React.useState<Record<string, string>>({});
+    const [selectedPlatforms, setSelectedPlatforms] = React.useState<string[]>([]);
+
+    React.useEffect(() => {
+        const step1Data = JSON.parse(sessionStorage.getItem('report_step_1') || '{}');
+        const platforms = step1Data.platforms || [];
+        setSelectedPlatforms(platforms);
+
+        // Initialize links object
+        const initialLinks: Record<string, string> = {};
+        platforms.forEach((p: string) => {
+            initialLinks[p] = '';
+        });
+        setPlatformLinks(initialLinks);
+    }, []);
 
     const handleContinue = () => {
         // Save Step 2 data
         const step2Data = {
             incident_description: incidentDesc,
             suspect_info: suspectInfo,
-            victim_details: victimDetails
+            victim_details: victimDetails,
+            platform_links: platformLinks
         };
         sessionStorage.setItem('report_step_2', JSON.stringify(step2Data));
         navigate('/report/processing');
@@ -71,7 +87,35 @@ const ComplaintStep2: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Section 2: Suspected Accused */}
+                    {/* Section 2: Platform Links */}
+                    {selectedPlatforms.length > 0 && (
+                        <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="material-symbols-outlined text-primary text-xl">link</span>
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Incident Links</h3>
+                            </div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Please provide the URL to the profile or post for each platform.</p>
+                            <div className="space-y-4">
+                                {selectedPlatforms.map((platform) => (
+                                    <div key={platform} className="space-y-1.5">
+                                        <label className="text-xs font-semibold capitalize text-slate-500 dark:text-slate-400 ml-1">
+                                            {platform} Profile/Post Link <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="url"
+                                            required
+                                            className="w-full bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm h-11 px-3"
+                                            placeholder={`https://www.${platform}.com/...`}
+                                            value={platformLinks[platform] || ''}
+                                            onChange={(e) => setPlatformLinks({ ...platformLinks, [platform]: e.target.value })}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Section 3: Suspected Accused */}
                     <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -89,16 +133,6 @@ const ComplaintStep2: React.FC = () => {
                                     placeholder="e.g. Unknown or John Doe"
                                     value={suspectInfo.name}
                                     onChange={(e) => setSuspectInfo({ ...suspectInfo, name: e.target.value })}
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 ml-1">Platform / Social Media Handle</label>
-                                <input
-                                    type="text"
-                                    className="w-full bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm h-11 px-3"
-                                    placeholder="@username or Profile Link"
-                                    value={suspectInfo.handle}
-                                    onChange={(e) => setSuspectInfo({ ...suspectInfo, handle: e.target.value })}
                                 />
                             </div>
                         </div>

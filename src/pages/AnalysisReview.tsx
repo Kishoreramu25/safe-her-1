@@ -47,12 +47,15 @@ const AnalysisReview: React.FC = () => {
             // 3. Prepare report data for insertion
             const reportData = {
                 reporter_id: user.id,
-                platform: step1.platform || 'unknown',
+                platform: step1.platforms?.join(', ') || step1.platform || 'unknown',
                 category: step1.category || 'general',
                 evidence_urls: step1.evidence_urls || [],
                 incident_description: step2.incident_description || '',
                 victim_details: step2.victim_details || {},
-                suspect_info: step2.suspect_info || {},
+                suspect_info: {
+                    ...(step2.suspect_info || {}),
+                    platform_links: step2.platform_links || {}
+                },
                 risk_score: score, // Use the simulated score
                 status: 'new'
             };
