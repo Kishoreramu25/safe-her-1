@@ -35,9 +35,11 @@ const Auth: React.FC = () => {
 
                 if (signInError) throw signInError;
 
-                // Navigate based on role (check session metadata or just use passed role logic for now, 
-                // but real app should check db profile). Assuming success:
-                if (role === 'official') {
+                // Navigate based on redirectTo or role
+                const redirectTo = (location.state as { redirectTo?: string })?.redirectTo;
+                if (redirectTo) {
+                    navigate(redirectTo);
+                } else if (role === 'official') {
                     navigate('/dashboard');
                 } else {
                     navigate('/report/step1');
@@ -60,7 +62,10 @@ const Auth: React.FC = () => {
                 if (signUpError) throw signUpError;
 
                 alert("Account created! Please check your email/login automatically.");
-                if (role === 'official') {
+                const redirectTo = (location.state as { redirectTo?: string })?.redirectTo;
+                if (redirectTo) {
+                    navigate(redirectTo);
+                } else if (role === 'official') {
                     navigate('/dashboard');
                 } else {
                     navigate('/report/step1');

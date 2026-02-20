@@ -11,13 +11,13 @@ const SideNav: React.FC = () => {
     const isActive = (path: string) => location.pathname === path;
 
     const navItems = [
-        { path: '/dashboard', label: 'Home', icon: 'home' },
+        { path: '/', label: 'SafeHer Home', icon: 'shield_person' },
+        { path: '/dashboard', label: 'Monitor Cases', icon: 'home' },
         { path: '/my-reports', label: 'My Reports', icon: 'history' },
         { path: '/functions', label: 'Functions', icon: 'grid_view' },
         { path: '/ai-assistant', label: 'Ask AI', icon: 'smart_toy' },
-        { label: 'Take Action', icon: 'rocket_launch', url: 'https://safe-her-2.vercel.app/' },
         { path: '/settings', label: 'Settings', icon: 'settings' },
-        { label: 'Delete content', icon: 'delete', action: 'delete' },
+        { path: '/', label: 'Request Deletion', icon: 'delete' },
     ];
 
     return (
@@ -43,30 +43,20 @@ const SideNav: React.FC = () => {
                         <button
                             key={item.label}
                             onClick={() => {
-                                if (item.url) {
-                                    window.open(item.url, '_blank');
-                                } else if (item.action === 'delete') {
-                                    alert("Delete Post Triggered");
-                                } else {
-                                    navigate(item.path || '');
-                                }
+                                navigate(item.path);
                                 setIsOpen(false);
                             }}
                             className={cn(
                                 "flex items-center gap-3 p-3 rounded-xl transition-all text-left",
-                                isActive(item.path || '')
+                                isActive(item.path)
                                     ? "bg-primary/10 text-primary font-bold"
-                                    : item.action === 'delete'
-                                        ? "hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 font-medium"
-                                        : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium",
-                                item.url && "text-primary font-bold"
+                                    : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium"
                             )}
                         >
-                            <span className="material-symbols-outlined" style={isActive(item.path || '') ? { fontVariationSettings: "'FILL' 1" } : {}}>
+                            <span className="material-symbols-outlined" style={isActive(item.path) ? { fontVariationSettings: "'FILL' 1" } : {}}>
                                 {item.icon}
                             </span>
                             <span className="text-sm">{item.label}</span>
-                            {item.url && <span className="material-symbols-outlined text-xs ml-auto">open_in_new</span>}
                         </button>
                     ))}
 
