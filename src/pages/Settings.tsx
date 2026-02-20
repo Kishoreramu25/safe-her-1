@@ -311,6 +311,26 @@ const Settings: React.FC = () => {
                     </div>
                 </section>
 
+                {/* App Actions Section */}
+                <section>
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">App Actions</h2>
+                    <div className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl p-1">
+                        <button
+                            onClick={() => window.open('https://safe-her-2.vercel.app/', '_blank')}
+                            className="w-full flex items-center gap-3 p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors group text-primary font-bold"
+                        >
+                            <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                <span className="material-symbols-outlined">rocket_launch</span>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-sm">Take Action</h3>
+                                <p className="text-xs text-slate-500 font-medium tracking-normal">Trigger immediate safety protocols</p>
+                            </div>
+                            <span className="material-symbols-outlined text-slate-400 text-lg">open_in_new</span>
+                        </button>
+                    </div>
+                </section>
+
                 {/* Account Actions */}
                 <section>
                     <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">Account</h2>
