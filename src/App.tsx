@@ -17,13 +17,14 @@ import Functions from '@/pages/Functions';
 import DeepfakeDetector from '@/pages/DeepfakeDetector';
 import MyReports from '@/pages/MyReports';
 import AIAssistant from '@/pages/AIAssistant';
+import TakedownTracker from '@/pages/TakedownTracker';
 import SideNav from '@/components/SideNav';
 import VoiceListener from '@/components/VoiceListener';
 
 const AppContent = () => {
   const location = useLocation();
   // Hide nav on specific full-screen or auth pages
-  const hideNavPaths = ['/', '/auth', '/sos', '/report/processing', '/report/success', '/functions/deepfake', '/ai-assistant'];
+  const hideNavPaths = ['/', '/auth', '/sos', '/report/processing', '/report/success', '/functions/deepfake', '/ai-assistant', '/takedown-tracker'];
   const showNav = !hideNavPaths.includes(location.pathname);
 
   return (
@@ -45,6 +46,7 @@ const AppContent = () => {
           <Route path="/track/:id" element={<Tracker />} />
           <Route path="/my-reports" element={<MyReports />} />
           <Route path="/ai-assistant" element={<AIAssistant />} />
+          <Route path="/takedown-tracker" element={<TakedownTracker />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/sos" element={<SOSActivation />} />
         </Routes>

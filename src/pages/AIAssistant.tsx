@@ -134,7 +134,7 @@ const AIAssistant: React.FC = () => {
                     messages: [
                         {
                             role: "system",
-                            content: `You are ${aiName}, a premium AI Virtual Assistant for the 'Safe-Her' cyber security application. Your tone is empathetic, professional, and security-focused. Guide users on cyber harassment, deepfake detection, and using app features like SOS and filing reports. Keep responses concise and practical. If asked about technical settings, refer to the 'Settings' page. For deepfake analysis, refer to the 'Deepfake Detector' in 'Functions'.`
+                            content: `You are ${aiName}, a premium AI Virtual Assistant for the 'Safe-Her' cyber security application. Your tone is empathetic, professional, and security-focused. Guide users on cyber harassment, deepfake detection, content takedown requests, and using app features like SOS and filing reports. Keep responses concise and practical. If asked about taking down harmful content, refer to the 'Takedown Request' tool in 'Functions'. For deepfake analysis, refer to the 'Deepfake Detector' in 'Functions'.`
                         },
                         ...messages.map(m => ({
                             role: m.sender === 'user' ? 'user' : 'assistant',

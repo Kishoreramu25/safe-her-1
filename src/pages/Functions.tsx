@@ -24,6 +24,14 @@ const Functions = () => {
         },
         // More placeholders for future
         {
+            id: 'takedown',
+            title: 'Takedown Request',
+            icon: 'gavel',
+            color: 'bg-emerald-500',
+            path: '/takedown-tracker',
+            desc: 'Initiate content removal across social platforms.'
+        },
+        {
             id: 'track',
             title: 'Track Status',
             icon: 'track_changes',
