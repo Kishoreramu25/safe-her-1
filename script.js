@@ -96,54 +96,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (next === 'url-removal' && e.currentTarget.closest('#step-1-2b')) {
                 const urlInputs = document.querySelectorAll('.platform-url-input');
-                const hasValue = Array.from(urlInputs).some(input => input.value.trim() !== '');
+                const resultsContainer = document.getElementById('search-results-container');
+                const title = document.getElementById('search-status-title');
 
-                if (hasValue) {
-                    const btnEl = e.currentTarget;
-                    btnEl.disabled = true;
-                    btnEl.style.opacity = '0.7';
-
-                    let scanProgress = 0;
-                    const scanInterval = setInterval(() => {
-                        scanProgress += Math.floor(Math.random() * 5) + 5;
-                        if (scanProgress >= 100) {
-                            scanProgress = 100;
-                            clearInterval(scanInterval);
-                            showStep('url-removal');
-                            startRemovalAnimation();
-                        } else {
-                            btnEl.textContent = `Scanning URLs... ${scanProgress}%`;
-                        }
-                    }, 50);
-                    return;
-                } else {
-                    showStep('1-3');
-                    return;
+                if (resultsContainer) {
+                    resultsContainer.innerHTML = '';
+                    urlInputs.forEach(input => {
+                        const platformId = input.dataset.platform;
+                        const platformName = input.previousElementSibling.textContent.replace(' leaked link', '');
+                        const div = document.createElement('div');
+                        div.style.display = 'flex';
+                        div.style.justifyContent = 'space-between';
+                        div.style.marginBottom = '15px';
+                        div.innerHTML = `
+                            <strong>${platformName}</strong>
+                            <span id="status-${platformId}" class="search-status-text">Searching...</span>
+                        `;
+                        resultsContainer.appendChild(div);
+                    });
                 }
+
+                const btnEl = e.currentTarget;
+                btnEl.disabled = true;
+                btnEl.style.opacity = '0.7';
+                if (title) title.textContent = 'Searching for Content...';
+
+                let scanProgress = 0;
+                const scanInterval = setInterval(() => {
+                    scanProgress += Math.floor(Math.random() * 5) + 5;
+                    if (scanProgress >= 100) {
+                        scanProgress = 100;
+                        clearInterval(scanInterval);
+                        showStep('url-removal');
+                        if (title) title.textContent = 'Search Complete';
+                        verifyLinks(urlInputs);
+                    } else {
+                        btnEl.textContent = `Scanning URLs... ${scanProgress}%`;
+                    }
+                }, 50);
+                return;
             }
             if (next) showStep(next);
         });
     });
 
-    function startRemovalAnimation() {
-        setTimeout(() => {
-            const el = document.getElementById('status-google');
-            if (el) { el.textContent = 'Search Found ✓'; el.style.color = '#16a34a'; }
-        }, 1000);
-        setTimeout(() => {
-            const el = document.getElementById('status-insta');
-            if (el) { el.textContent = 'Search Found ✓'; el.style.color = '#16a34a'; }
-        }, 2000);
-        setTimeout(() => {
-            const el = document.getElementById('status-whatsapp');
-            if (el) { el.textContent = 'Search Found ✓'; el.style.color = '#16a34a'; }
-            const finishBtn = document.getElementById('finish-removal-btn');
-            if (finishBtn) {
-                finishBtn.style.opacity = '1';
-                finishBtn.style.pointerEvents = 'auto';
-                finishBtn.textContent = 'Continue';
-            }
-        }, 3000);
+    function verifyLinks(urlInputs) {
+        urlInputs.forEach((input, index) => {
+            setTimeout(() => {
+                const platformId = input.dataset.platform;
+                const url = input.value.trim().toLowerCase();
+                const statusEl = document.getElementById(`status-${platformId}`);
+
+                if (!statusEl) return;
+
+                if (url === '') {
+                    statusEl.textContent = 'Not Provided';
+                    statusEl.style.color = '#94a3b8';
+                } else if (url.includes(platformId) || url.includes('http')) {
+                    // Simple heuristic: if platform name is in URL or it looks like a real link
+                    // We simulate "Found" for demo purposes if it looks halfway real
+                    statusEl.textContent = 'Search Found ✓';
+                    statusEl.style.color = '#16a34a';
+                } else {
+                    statusEl.textContent = 'Not Found ✗';
+                    statusEl.style.color = '#ef4444';
+                }
+
+                // Enable continue button after last item
+                if (index === urlInputs.length - 1) {
+                    const finishBtn = document.getElementById('finish-removal-btn');
+                    if (finishBtn) {
+                        finishBtn.style.opacity = '1';
+                        finishBtn.style.pointerEvents = 'auto';
+                        finishBtn.textContent = 'Continue';
+                    }
+                }
+            }, (index + 1) * 800);
+        });
     }
 
     // File Upload & Submit
