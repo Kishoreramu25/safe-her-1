@@ -1,37 +1,58 @@
 // ===== SafeHer India — Interactive Features =====
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ===== SUPABASE INITIALIZATION =====
+    // ===== 1. SUPABASE INITIALIZATION =====
     const supabaseUrl = 'https://dynfmafntewpfqmpzrot.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5bmZtYWZudGV3cGZxbXB6cm90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NjcxMzcsImV4cCI6MjA4NzE0MzEzN30.iutjUT5zCfwk_S9e7cb4SyWKoBUE2N71WOfKFdzuDJ8';
-
     const supabase = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseKey) : null;
 
-    // ===== START TOOL LOGIC =====
+    // ===== 2. GLOBAL SELECTORS & STATE =====
     const startBtn = document.getElementById('start-tool-btn');
     const introSection = document.getElementById('intro-sections');
     const wizardContainer = document.getElementById('wizard-container');
-
-    if (startBtn && introSection && wizardContainer) {
-        startBtn.addEventListener('click', () => {
-            const heroEntrance = document.querySelector('.hero-entrance');
-            if (heroEntrance) heroEntrance.style.display = 'none';
-            introSection.style.display = 'none';
-            wizardContainer.style.display = 'block';
-            document.querySelector('.wizard-header').style.display = 'flex';
-            // Reset wizard to first step
-            stepHistory.length = 0;
-            currentStep = '1-1';
-            showStep('1-1', false);
-            window.scrollTo(0, 0);
-        });
-    }
-
-    // ===== CREATE CASE WIZARD =====
+    const wizardHeader = document.querySelector('.wizard-header');
+    const backBtn = document.getElementById('wizard-back-btn');
     const steps = document.querySelectorAll('.wizard-step');
+    const platformChecks = document.querySelectorAll('input[name="platform"]');
+    const toUrlStepBtn = document.getElementById('to-url-step');
+    const uploadZone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    const submitBtn = document.getElementById('submit-step-2');
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    const qButtons = document.querySelectorAll('.q-btn');
+
     let selectedFiles = [];
-    const stepHistory = [];
+    let stepHistory = [];
     let currentStep = '1-1';
+    let latestCaseData = null;
+
+    // ===== 3. CONFIGURATION DATA =====
+    const platformEmails = {
+        'google': 'removals@google.com',
+        'facebook': 'legal@support.facebook.com',
+        'instagram': 'legal@support.instagram.com',
+        'tiktok': 'legal@tiktok.com',
+        'x': 'legal@x.com',
+        'whatsapp': 'grievance@whatsapp.com',
+        'telegram': 'legal@telegram.org',
+        'snapchat': 'legal@snapchat.com',
+        'reddit': 'legal@reddit.com',
+        'pinterest': 'legal@pinterest.com'
+    };
+
+    const platformKeywords = {
+        'google': ['google', 'youtube', 'goog'],
+        'facebook': ['facebook', 'fb.com'],
+        'instagram': ['instagram', 'insta', 'ig.me'],
+        'tiktok': ['tiktok'],
+        'x': ['x.com', 'twitter'],
+        'whatsapp': ['whatsapp', 'wa.me'],
+        'telegram': ['telegram', 't.me'],
+        'snapchat': ['snapchat', 'snap'],
+        'reddit': ['reddit'],
+        'pinterest': ['pinterest']
+    };
 
     const stepProgressMap = {
         '1-1': { num: 1, total: 9, percent: 11 },
@@ -46,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'success': { num: 9, total: 9, percent: 100 }
     };
 
+    // ===== 4. CORE FUNCTIONS =====
     function showStep(stepId, pushToHistory = true) {
         if (pushToHistory && currentStep !== stepId) {
             stepHistory.push(currentStep);
@@ -73,108 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
             progFill.style.width = `${progNode.percent}%`;
         }
     }
-
-    // Back Button Logic
-    const backBtn = document.getElementById('wizard-back-btn');
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            if (stepHistory.length > 0) {
-                const prevStep = stepHistory.pop();
-                showStep(prevStep, false);
-            } else {
-                // Return to intro if no history
-                wizardContainer.style.display = 'none';
-                introSection.style.display = 'block';
-                window.scrollTo(0, 0);
-            }
-        });
-    }
-
-    document.querySelectorAll('.q-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const next = e.currentTarget.getAttribute('data-next');
-
-            if (next === 'url-removal' && e.currentTarget.closest('#step-1-2b')) {
-                const urlInputs = document.querySelectorAll('.platform-url-input');
-                const hasValue = Array.from(urlInputs).some(input => input.value.trim() !== '');
-
-                if (!hasValue) {
-                    alert('Please provide at least one leaked link to continue.');
-                    return;
-                }
-
-                const resultsContainer = document.getElementById('search-results-container');
-                const title = document.getElementById('search-status-title');
-
-                if (resultsContainer) {
-                    resultsContainer.innerHTML = '';
-                    urlInputs.forEach(input => {
-                        const platformId = input.dataset.platform;
-                        const platformName = input.previousElementSibling.textContent.replace(' leaked link', '');
-                        const div = document.createElement('div');
-                        div.style.display = 'flex';
-                        div.style.justifyContent = 'space-between';
-                        div.style.marginBottom = '15px';
-                        div.innerHTML = `
-                            <strong>${platformName}</strong>
-                            <span id="status-${platformId}" class="search-status-text">Searching...</span>
-                        `;
-                        resultsContainer.appendChild(div);
-                    });
-                }
-
-                const btnEl = e.currentTarget;
-                btnEl.disabled = true;
-                btnEl.style.opacity = '0.7';
-                if (title) title.textContent = 'Searching for Content...';
-
-                let scanProgress = 0;
-                const scanInterval = setInterval(() => {
-                    scanProgress += Math.floor(Math.random() * 5) + 5;
-                    if (scanProgress >= 100) {
-                        scanProgress = 100;
-                        clearInterval(scanInterval);
-                        showStep('url-removal');
-                        if (title) title.textContent = 'Search Complete';
-                        verifyLinks(urlInputs);
-                    } else {
-                        btnEl.textContent = `Scanning URLs... ${scanProgress}%`;
-                    }
-                }, 50);
-                return;
-            }
-            if (next) showStep(next);
-        });
-    });
-
-    // Platform Contact Emails
-    const platformEmails = {
-        'google': 'removals@google.com',
-        'facebook': 'legal@support.facebook.com',
-        'instagram': 'legal@support.instagram.com',
-        'tiktok': 'legal@tiktok.com',
-        'x': 'legal@x.com',
-        'whatsapp': 'grievance@whatsapp.com',
-        'telegram': 'legal@telegram.org',
-        'snapchat': 'legal@snapchat.com',
-        'reddit': 'legal@reddit.com',
-        'pinterest': 'legal@pinterest.com'
-    };
-
-    let latestCaseData = null;
-
-    const platformKeywords = {
-        'google': ['google', 'youtube', 'goog'],
-        'facebook': ['facebook', 'fb.com'],
-        'instagram': ['instagram', 'insta', 'ig.me'],
-        'tiktok': ['tiktok'],
-        'x': ['x.com', 'twitter'],
-        'whatsapp': ['whatsapp', 'wa.me'],
-        'telegram': ['telegram', 't.me'],
-        'snapchat': ['snapchat', 'snap'],
-        'reddit': ['reddit'],
-        'pinterest': ['pinterest']
-    };
 
     function verifyLinks(urlInputs) {
         urlInputs.forEach((input, index) => {
@@ -205,27 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (index === urlInputs.length - 1) {
                     const finishBtn = document.getElementById('finish-removal-btn');
                     if (finishBtn) {
-                        finishBtn.style.opacity = '1';
-                        finishBtn.style.pointerEvents = 'auto';
+                        finishBtn.disabled = false;
                         finishBtn.textContent = 'Continue';
                     }
                 }
             }, (index + 1) * 800);
-        });
-    }
-
-    // File Upload & Submit
-    const uploadZone = document.getElementById('upload-zone');
-    const fileInput = document.getElementById('file-input');
-    const fileList = document.getElementById('file-list');
-    const toUrlStepBtn = document.getElementById('to-url-step');
-    const submitBtn = document.getElementById('submit-step-2');
-
-    if (uploadZone && fileInput) {
-        uploadZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', () => {
-            handleFiles(fileInput.files);
-            fileInput.value = '';
         });
     }
 
@@ -251,9 +155,116 @@ document.addEventListener('DOMContentLoaded', () => {
             div.innerHTML = `<strong>${item.file.name}</strong><br><span style="color:#888; font-family:monospace; font-size:0.7rem;">${item.hash}</span>`;
             fileList.appendChild(div);
         });
+        // Always enabled because upload is optional
         if (submitBtn) submitBtn.disabled = false;
     }
 
+    // ===== 5. EVENT LISTENERS =====
+
+    // Start Button
+    if (startBtn && introSection && wizardContainer) {
+        startBtn.addEventListener('click', () => {
+            const heroEntrance = document.querySelector('.hero-entrance');
+            if (heroEntrance) heroEntrance.style.display = 'none';
+            introSection.style.display = 'none';
+            wizardContainer.style.display = 'block';
+            if (wizardHeader) wizardHeader.style.display = 'flex';
+            stepHistory = [];
+            showStep('1-1', false);
+            window.scrollTo(0, 0);
+        });
+    }
+
+    // Back Button
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            if (stepHistory.length > 0) {
+                const prevStep = stepHistory.pop();
+                showStep(prevStep, false);
+            } else {
+                if (wizardContainer) wizardContainer.style.display = 'none';
+                if (introSection) introSection.style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+        });
+    }
+
+    // Wizard Question Buttons
+    qButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const next = e.currentTarget.getAttribute('data-next');
+
+            // Specialized logic for the URL verification step
+            if (next === 'url-removal' && e.currentTarget.closest('#step-1-2b')) {
+                const urlInputs = document.querySelectorAll('.platform-url-input');
+                const hasValue = Array.from(urlInputs).some(input => input.value.trim() !== '');
+
+                if (!hasValue) {
+                    alert('Please provide at least one leaked link to continue.');
+                    return;
+                }
+
+                const resultsContainer = document.getElementById('search-results-container');
+                const title = document.getElementById('search-status-title');
+
+                if (resultsContainer) {
+                    resultsContainer.innerHTML = '';
+                    urlInputs.forEach(input => {
+                        const platformId = input.dataset.platform;
+                        // Get platform name from the label preceding the input
+                        const label = input.closest('div').querySelector('label');
+                        const platformName = label ? label.textContent.replace(' leaked link', '') : 'Platform';
+                        const div = document.createElement('div');
+                        div.style.display = 'flex';
+                        div.style.justifyContent = 'space-between';
+                        div.style.marginBottom = '15px';
+                        div.innerHTML = `
+                            <strong>${platformName}</strong>
+                            <span id="status-${platformId}" class="search-status-text">Searching...</span>
+                        `;
+                        resultsContainer.appendChild(div);
+                    });
+                }
+
+                const btnEl = e.currentTarget;
+                btnEl.disabled = true;
+                if (title) title.textContent = 'Searching for Content...';
+
+                let scanProgress = 0;
+                const scanInterval = setInterval(() => {
+                    scanProgress += Math.floor(Math.random() * 5) + 5;
+                    if (scanProgress >= 100) {
+                        scanProgress = 100;
+                        clearInterval(scanInterval);
+                        showStep('url-removal');
+                        if (title) title.textContent = 'Search Complete';
+                        verifyLinks(urlInputs);
+                    } else {
+                        btnEl.textContent = `Scanning URLs... ${scanProgress}%`;
+                    }
+                }, 50);
+                return;
+            }
+
+            if (next) showStep(next);
+        });
+    });
+
+    // Platform Checkbox Selection
+    platformChecks.forEach(check => {
+        check.addEventListener('change', (e) => {
+            const item = e.target.closest('.platform-item');
+            if (e.target.checked) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+            const anyChecked = Array.from(platformChecks).some(c => c.checked);
+            if (toUrlStepBtn) toUrlStepBtn.disabled = !anyChecked;
+        });
+    });
+
+    // Transition to URL step (Dynamic Input Generation)
     if (toUrlStepBtn) {
         toUrlStepBtn.addEventListener('click', () => {
             const selectedPlatforms = Array.from(platformChecks)
@@ -280,146 +291,150 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Platform Selection Logic
-    const platformChecks = document.querySelectorAll('input[name="platform"]');
-    if (platformChecks) {
-        platformChecks.forEach(check => {
-            check.addEventListener('change', (e) => {
-                const item = e.target.closest('.platform-item');
-                if (e.target.checked) {
-                    item.classList.add('selected');
-                } else {
-                    item.classList.remove('selected');
-                }
-                const anyChecked = Array.from(platformChecks).some(c => c.checked);
-                if (toUrlStepBtn) toUrlStepBtn.disabled = !anyChecked;
-            });
+    // Upload Zone Listeners
+    if (uploadZone && fileInput) {
+        uploadZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => {
+            handleFiles(fileInput.files);
+            fileInput.value = '';
         });
     }
 
+    // Final Submission
     if (submitBtn) {
         submitBtn.addEventListener('click', async () => {
-            const caseNum = 'SHI-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-            const selectedPlatforms = Array.from(platformChecks).filter(c => c.checked).map(c => c.value);
-            const platformLinks = {};
-            document.querySelectorAll('.platform-url-input').forEach(input => {
-                if (input.value.trim() !== '') {
-                    platformLinks[input.dataset.platform] = input.value.trim();
+            try {
+                const caseNum = 'SHI-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                const selPlats = Array.from(platformChecks).filter(c => c.checked).map(c => c.value);
+                const platformLinks = {};
+
+                document.querySelectorAll('.platform-url-input').forEach(input => {
+                    if (input.value.trim() !== '') {
+                        platformLinks[input.dataset.platform] = input.value.trim();
+                    }
+                });
+
+                const caseData = {
+                    case_number: caseNum,
+                    date_created: new Date().toLocaleDateString(),
+                    platforms: selPlats,
+                    platform_links: platformLinks,
+                    hashes: selectedFiles.map(f => ({ name: f.file.name, hash: f.hash }))
+                };
+
+                submitBtn.textContent = 'Applying digital fingerprints...';
+                submitBtn.disabled = true;
+
+                // Simulated progress
+                await new Promise(r => setTimeout(r, 1500));
+                submitBtn.textContent = 'Sending deletion requests...';
+                await new Promise(r => setTimeout(r, 1500));
+
+                if (supabase) {
+                    const { error } = await supabase.from('cases').insert([caseData]);
+                    if (error) console.error('Supabase error:', error);
                 }
-            });
 
-            const caseData = {
-                case_number: caseNum,
-                date_created: new Date().toLocaleDateString(),
-                platforms: selectedPlatforms,
-                platform_links: platformLinks,
-                hashes: selectedFiles.map(f => ({ name: f.file.name, hash: f.hash }))
-            };
+                // Update success UI
+                const caseDisplay = document.getElementById('case-number-display');
+                if (caseDisplay) caseDisplay.textContent = caseNum;
 
-            submitBtn.textContent = 'Applying digital fingerprints...';
-            submitBtn.disabled = true;
+                const platformNames = Array.from(platformChecks)
+                    .filter(c => c.checked)
+                    .map(c => c.closest('.platform-item').querySelector('.platform-name').textContent);
 
-            // Artificial delay to simulate "applying fingerprints"
-            await new Promise(r => setTimeout(r, 1500));
-            submitBtn.textContent = 'Sending deletion requests...';
-            await new Promise(r => setTimeout(r, 1500));
-
-            if (supabase) {
-                const { error } = await supabase.from('cases').insert([caseData]);
-                if (error) {
-                    console.error('Supabase error:', error);
+                let message = "Your deletion request has been successfully forwarded to the specific platforms you selected: ";
+                if (platformNames.length === 1) {
+                    message += `<strong>${platformNames[0]}</strong>`;
+                } else if (platformNames.length === 2) {
+                    message += `<strong>${platformNames[0]}</strong> and <strong>${platformNames[1]}</strong>`;
+                } else {
+                    const last = platformNames.pop();
+                    message += `<strong>${platformNames.join(', ')}</strong>, and <strong>${last}</strong>`;
                 }
+                message += ". Our system has contacted their official email addresses for immediate action.";
+
+                const msgEl = document.getElementById('success-platform-msg');
+                if (msgEl) msgEl.innerHTML = message;
+
+                latestCaseData = caseData;
+                showStep('success');
+                if (wizardHeader) wizardHeader.style.display = 'none';
+
+            } catch (err) {
+                console.error('Submission failed:', err);
+                alert('There was an error processing your request. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Request';
             }
-
-            document.getElementById('case-number-display').textContent = caseNum;
-
-            const platformNames = Array.from(platformChecks)
-                .filter(c => c.checked)
-                .map(c => c.closest('.platform-item').querySelector('.platform-name').textContent);
-
-            let message = "Your deletion request has been successfully forwarded to the specific platforms you selected: ";
-            if (platformNames.length === 1) {
-                message += `<strong>${platformNames[0]}</strong>`;
-            } else if (platformNames.length === 2) {
-                message += `<strong>${platformNames[0]}</strong> and <strong>${platformNames[1]}</strong>`;
-            } else {
-                const last = platformNames.pop();
-                message += `<strong>${platformNames.join(', ')}</strong>, and <strong>${last}</strong>`;
-            }
-            message += ". Our system has contacted their official email addresses for immediate action.";
-
-            const msgEl = document.getElementById('success-platform-msg');
-            if (msgEl) msgEl.innerHTML = message;
-
-            latestCaseData = caseData;
-
-            showStep('success');
-            document.querySelector('.wizard-header').style.display = 'none';
         });
     }
 
-    // PDF Generation
-    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    // PDF Download
     if (downloadPdfBtn) {
         downloadPdfBtn.addEventListener('click', () => {
             if (!latestCaseData) return;
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const margin = 20;
-            let y = 30;
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const margin = 20;
+                let y = 30;
 
-            // Header
-            doc.setFontSize(22);
-            doc.setTextColor(22, 101, 52); // SafeHer Green
-            doc.text('SafeHer India', margin, y);
+                doc.setFontSize(22);
+                doc.setTextColor(22, 101, 52); // SafeHer Green
+                doc.text('SafeHer India', margin, y);
 
-            doc.setFontSize(10);
-            doc.setTextColor(100, 116, 139);
-            y += 10;
-            doc.text(`System ID: SHI-AUTH-${latestCaseData.case_number.split('-')[1]}`, margin, y);
-            doc.text(`Date Issued: ${latestCaseData.date_created}`, margin, y + 5);
+                doc.setFontSize(10);
+                doc.setTextColor(100, 116, 139);
+                y += 10;
+                doc.text(`System ID: SHI-AUTH-${latestCaseData.case_number.split('-')[1]}`, margin, y);
+                doc.text(`Date Issued: ${latestCaseData.date_created}`, margin, y + 5);
 
-            y += 20;
-            doc.setDrawColor(226, 232, 240);
-            doc.line(margin, y, 190, y);
-
-            y += 15;
-            doc.setFontSize(14);
-            doc.setTextColor(30, 41, 59);
-            doc.setFont("helvetica", "bold");
-            doc.text('Official Deletion Request Summary', margin, y);
-
-            latestCaseData.platforms.forEach((platformId) => {
-                const platformName = platformId.charAt(0).toUpperCase() + platformId.slice(1);
-                const contactEmail = platformEmails[platformId] || 'legal@support.com';
-                const link = latestCaseData.platform_links[platformId] || 'Not Provided';
-
-                if (y > 250) {
-                    doc.addPage();
-                    y = 30;
-                }
+                y += 20;
+                doc.setDrawColor(226, 232, 240);
+                doc.line(margin, y, 190, y);
 
                 y += 15;
-                doc.setFontSize(12);
+                doc.setFontSize(14);
                 doc.setTextColor(30, 41, 59);
                 doc.setFont("helvetica", "bold");
-                doc.text(`TO: ${platformName} Legal/Compliance Team`, margin, y);
+                doc.text('Official Deletion Request Summary', margin, y);
 
-                y += 7;
-                doc.setFont("helvetica", "normal");
-                doc.setFontSize(10);
-                doc.text(`Contact: ${contactEmail}`, margin, y);
+                latestCaseData.platforms.forEach((platformId) => {
+                    const platformName = platformId.charAt(0).toUpperCase() + platformId.slice(1);
+                    const contactEmail = platformEmails[platformId] || 'legal@support.com';
+                    const link = latestCaseData.platform_links[platformId] || 'Not Provided';
 
-                y += 10;
-                const content = `Subject: Formal Request for Removal of Non-Consensual Intimate Imagery (Case #${latestCaseData.case_number})\n\nDear ${platformName} Support Team,\n\nWe are formally requesting the immediate removal of the content hosted at the following URL:\n\n${link}\n\nThis content consists of non-consensual intimate imagery/material which violates your community guidelines and international digital safety standards. SafeHer India has verified this request, and a digital fingerprint has been generated for case archival.\n\nWe request that you process this takedown immediately to prevent further harm. Please confirm the removal citing Case Number ${latestCaseData.case_number}.\n\nSincerely,\nDigital Safety Compliance Officer\nSafeHer India Automation System`;
+                    if (y > 240) {
+                        doc.addPage();
+                        y = 30;
+                    }
 
-                const splitText = doc.splitTextToSize(content, 170);
-                doc.text(splitText, margin, y);
-                y += (splitText.length * 5) + 5;
-            });
+                    y += 15;
+                    doc.setFontSize(12);
+                    doc.setTextColor(30, 41, 59);
+                    doc.setFont("helvetica", "bold");
+                    doc.text(`TO: ${platformName} Legal/Compliance Team`, margin, y);
 
-            doc.save(`SafeHer_Deletion_Request_${latestCaseData.case_number}.pdf`);
+                    y += 7;
+                    doc.setFont("helvetica", "normal");
+                    doc.setFontSize(10);
+                    doc.text(`Contact: ${contactEmail}`, margin, y);
+
+                    y += 10;
+                    const content = `Subject: Formal Request for Removal of Non-Consensual Intimate Imagery (Case #${latestCaseData.case_number})\n\nDear ${platformName} Support Team,\n\nWe are formally requesting the immediate removal of the content hosted at the following URL:\n\n${link}\n\nThis content consists of non-consensual intimate imagery/material which violates your community guidelines and international digital safety standards. SafeHer India has verified this request, and a digital fingerprint has been generated for case archival.\n\nWe request that you process this takedown immediately to prevent further harm. Please confirm the removal citing Case Number ${latestCaseData.case_number}.\n\nSincerely,\nDigital Safety Compliance Officer\nSafeHer India Automation System`;
+
+                    const splitText = doc.splitTextToSize(content, 170);
+                    doc.text(splitText, margin, y);
+                    y += (splitText.length * 5) + 5;
+                });
+
+                doc.save(`SafeHer_Deletion_Request_${latestCaseData.case_number}.pdf`);
+            } catch (err) {
+                console.error('PDF generation failed:', err);
+                alert('Could not generate PDF. Please contact support.');
+            }
         });
     }
 });
