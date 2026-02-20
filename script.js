@@ -95,8 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const next = e.currentTarget.getAttribute('data-next');
 
             if (next === 'url-removal' && e.currentTarget.closest('#step-1-2b')) {
-                const urlInput = document.getElementById('content-url');
-                if (urlInput && urlInput.value.trim() !== '') {
+                const urlInputs = document.querySelectorAll('.platform-url-input');
+                const hasValue = Array.from(urlInputs).some(input => input.value.trim() !== '');
+
+                if (hasValue) {
                     const btnEl = e.currentTarget;
                     btnEl.disabled = true;
                     btnEl.style.opacity = '0.7';
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             showStep('url-removal');
                             startRemovalAnimation();
                         } else {
-                            btnEl.textContent = `Scanning URL... ${scanProgress}%`;
+                            btnEl.textContent = `Scanning URLs... ${scanProgress}%`;
                         }
                     }, 50);
                     return;
@@ -185,7 +187,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (toUrlStepBtn) {
-        toUrlStepBtn.addEventListener('click', () => showStep('1-2b'));
+        toUrlStepBtn.addEventListener('click', () => {
+            const selectedPlatforms = Array.from(platformChecks)
+                .filter(c => c.checked)
+                .map(c => ({
+                    id: c.value,
+                    name: c.closest('.platform-item').querySelector('.platform-name').textContent
+                }));
+
+            const container = document.getElementById('dynamic-url-inputs');
+            if (container) {
+                container.innerHTML = '';
+                selectedPlatforms.forEach(p => {
+                    const div = document.createElement('div');
+                    div.style.marginBottom = '10px';
+                    div.innerHTML = `
+                        <label style="display:block; font-size: 0.9rem; margin-bottom: 5px; color: #64748b; font-weight: 500;">${p.name} leaked link</label>
+                        <input type="url" class="form-input platform-url-input" data-platform="${p.id}" placeholder="https://${p.id}.com/..." style="margin-bottom:0">
+                    `;
+                    container.appendChild(div);
+                });
+            }
+            showStep('1-2b');
+        });
     }
 
     // Platform Selection Logic
@@ -209,11 +233,18 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.addEventListener('click', async () => {
             const caseNum = 'SHI-' + Math.random().toString(36).substr(2, 9).toUpperCase();
             const selectedPlatforms = Array.from(platformChecks).filter(c => c.checked).map(c => c.value);
+            const platformLinks = {};
+            document.querySelectorAll('.platform-url-input').forEach(input => {
+                if (input.value.trim() !== '') {
+                    platformLinks[input.dataset.platform] = input.value.trim();
+                }
+            });
 
             const caseData = {
                 case_number: caseNum,
                 date_created: new Date().toLocaleDateString(),
                 platforms: selectedPlatforms,
+                platform_links: platformLinks,
                 hashes: selectedFiles.map(f => ({ name: f.file.name, hash: f.hash }))
             };
 

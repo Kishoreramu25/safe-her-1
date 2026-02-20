@@ -222,6 +222,22 @@ p {
     gap: 12px;
 }
 
+#dynamic-url-inputs {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+    margin-bottom: 10px;
+}
+
+#dynamic-url-inputs::-webkit-scrollbar {
+    width: 6px;
+}
+
+#dynamic-url-inputs::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
 .platform-item {
     display: flex;
     align-items: center;
