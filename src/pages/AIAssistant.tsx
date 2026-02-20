@@ -100,9 +100,9 @@ const AIAssistant: React.FC = () => {
                     timestamp: new Date()
                 }
             ]);
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error saving AI name:', err);
-            alert("Failed to save AI name. Please try again.");
+            alert(`Failed to save AI name: ${err.message || "Unknown error"}. Make sure you ran the SQL command to add the 'ai_name' column.`);
         }
     };
 
