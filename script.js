@@ -152,9 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (url === '') {
                     statusEl.textContent = 'Not Provided';
                     statusEl.style.color = '#94a3b8';
-                } else if (url.includes(platformId) || url.includes('http')) {
-                    // Simple heuristic: if platform name is in URL or it looks like a real link
-                    // We simulate "Found" for demo purposes if it looks halfway real
+                } else if (url.includes(platformId)) {
+                    // Strict heuristic: link must contain the platform keyword
                     statusEl.textContent = 'Search Found ✓';
                     statusEl.style.color = '#16a34a';
                 } else {
