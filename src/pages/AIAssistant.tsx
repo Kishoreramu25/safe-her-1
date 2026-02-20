@@ -62,7 +62,7 @@ const AIAssistant: React.FC = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: "llama3-8b-8192",
+                    model: "llama-3.3-70b-versatile",
                     messages: [
                         {
                             role: "system",
@@ -98,11 +98,11 @@ const AIAssistant: React.FC = () => {
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, aiMsg]);
-        } catch (error) {
+        } catch (error: any) {
             console.error('AI Error:', error);
             const errorMsg: Message = {
                 id: Date.now() + 1,
-                text: "My secure connection was interrupted. Please check your internet and try again.",
+                text: `Connection Error: ${error.message || "Unknown error"}. Check your API key and internet connection.`,
                 sender: 'ai',
                 timestamp: new Date()
             };
