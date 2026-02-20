@@ -14,6 +14,7 @@ const SideNav: React.FC = () => {
         { path: '/dashboard', label: 'Home', icon: 'home' },
         { path: '/my-reports', label: 'My Reports', icon: 'history' },
         { path: '/functions', label: 'Functions', icon: 'grid_view' },
+        { path: '/ai-assistant', label: 'Ask AI', icon: 'smart_toy' },
         { label: 'Take Action', icon: 'rocket_launch', url: 'https://safe-her-2.vercel.app/' },
         { path: '/settings', label: 'Settings', icon: 'settings' },
         { label: 'Delete content', icon: 'delete', action: 'delete' },
