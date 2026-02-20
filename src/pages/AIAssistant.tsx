@@ -43,31 +43,56 @@ const AIAssistant: React.FC = () => {
         setInputValue('');
         setIsTyping(true);
 
-        // Simulate AI response
-        setTimeout(() => {
+        try {
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    model: "llama3-8b-8192",
+                    messages: [
+                        {
+                            role: "system",
+                            content: "You are Aegis, a premium AI Virtual Assistant for the 'Safe-Her' cyber security application. Your tone is empathetic, professional, and security-focused. Guide users on cyber harassment, deepfake detection, and using app features like SOS and filing reports. Keep responses concise and practical. If asked about technical settings, refer to the 'Settings' page. For deepfake analysis, refer to the 'Deepfake Detector' in 'Functions'."
+                        },
+                        ...messages.map(m => ({
+                            role: m.sender === 'user' ? 'user' : 'assistant',
+                            content: m.text
+                        })),
+                        {
+                            role: "user",
+                            content: inputValue
+                        }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 500
+                })
+            });
+
+            const data = await response.json();
+            const aiText = data.choices?.[0]?.message?.content || "I'm having trouble connecting to my secure servers. Please try again in a moment.";
+
             const aiMsg: Message = {
                 id: Date.now() + 1,
-                text: getAIResponse(userMsg.text),
+                text: aiText,
                 sender: 'ai',
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, aiMsg]);
+        } catch (error) {
+            console.error('AI Error:', error);
+            const errorMsg: Message = {
+                id: Date.now() + 1,
+                text: "My secure connection was interrupted. Please check your internet and try again.",
+                sender: 'ai',
+                timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMsg]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
-    };
-
-    const getAIResponse = (input: string): string => {
-        const lowerInput = input.toLowerCase();
-        if (lowerInput.includes('deepfake')) {
-            return "To detect deepfakes, look for unnatural eye blinking, inconsistent skin tones, or blurring around the mouth while speaking. You can use our Deepfake Detector tool under 'Functions' for a detailed analysis.";
         }
-        if (lowerInput.includes('report') || lowerInput.includes('case')) {
-            return "You can file a new complaint by clicking the 'Functions' menu and selecting 'File Complaint'. Your case will be audited by our AI and reviewed by cyber officials.";
-        }
-        if (lowerInput.includes('sos') || lowerInput.includes('help')) {
-            return "If you're in immediate danger, use the SOS button in the menu or trigger it with your voice keyword. I can also help you configure your emergency contacts in 'Settings'.";
-        }
-        return "I'm here to support you. You can ask me about cybercrimes, how to file reports, or security tips. How else can I assist?";
     };
 
     return (
