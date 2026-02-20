@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(c => c.checked)
                 .map(c => c.closest('.platform-item').querySelector('.platform-name').textContent);
 
-            let message = "Your deletion request has been forwarded to ";
+            let message = "Your deletion request has been successfully forwarded to the specific platforms you selected: ";
             if (platformNames.length === 1) {
                 message += `<strong>${platformNames[0]}</strong>`;
             } else if (platformNames.length === 2) {
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const last = platformNames.pop();
                 message += `<strong>${platformNames.join(', ')}</strong>, and <strong>${last}</strong>`;
             }
-            message += " through their official mail addresses.";
+            message += ". Our system has contacted their official email addresses for immediate action.";
 
             const msgEl = document.getElementById('success-platform-msg');
             if (msgEl) msgEl.innerHTML = message;
