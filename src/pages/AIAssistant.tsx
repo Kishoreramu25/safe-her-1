@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 
 interface Message {
     id: number;
@@ -11,23 +13,87 @@ interface Message {
 
 const AIAssistant: React.FC = () => {
     const navigate = useNavigate();
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: 1,
-            text: "Hello! I am Aegis, your AI Cyber Safety Assistant. How can I help you stay secure today?",
-            sender: 'ai',
-            timestamp: new Date()
-        }
-    ]);
+    const { user } = useAuth();
+    const [aiName, setAiName] = useState<string>('Aegis AI');
+    const [isNamingMode, setIsNamingMode] = useState(false);
+    const [tempName, setTempName] = useState('');
+    const [isLoadingName, setIsLoadingName] = useState(true);
+
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Initial Fetch: Get custom AI name from DB
+    useEffect(() => {
+        const fetchAiName = async () => {
+            if (!user) return;
+
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('ai_name')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error) throw error;
+
+                if (data?.ai_name) {
+                    setAiName(data.ai_name);
+                    setMessages([
+                        {
+                            id: 1,
+                            text: `Hello! I am ${data.ai_name}, your personalized AI Cyber Safety Assistant. How can I help you today?`,
+                            sender: 'ai',
+                            timestamp: new Date()
+                        }
+                    ]);
+                } else {
+                    setIsNamingMode(true);
+                }
+            } catch (err) {
+                console.error('Error fetching AI name:', err);
+                setIsNamingMode(true);
+            } finally {
+                setIsLoadingName(false);
+            }
+        };
+
+        fetchAiName();
+    }, [user]);
 
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [messages, isTyping]);
+
+    const handleSaveName = async () => {
+        if (!tempName.trim() || !user) return;
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ ai_name: tempName })
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            setAiName(tempName);
+            setIsNamingMode(false);
+            setMessages([
+                {
+                    id: 1,
+                    text: `Hello! I am ${tempName}, your personalized AI Cyber Safety Assistant. How can I help you stay secure today?`,
+                    sender: 'ai',
+                    timestamp: new Date()
+                }
+            ]);
+        } catch (err) {
+            console.error('Error saving AI name:', err);
+            alert("Failed to save AI name. Please try again.");
+        }
+    };
 
     const handleSend = async () => {
         if (!inputValue.trim()) return;
@@ -66,7 +132,7 @@ const AIAssistant: React.FC = () => {
                     messages: [
                         {
                             role: "system",
-                            content: "You are Aegis, a premium AI Virtual Assistant for the 'Safe-Her' cyber security application. Your tone is empathetic, professional, and security-focused. Guide users on cyber harassment, deepfake detection, and using app features like SOS and filing reports. Keep responses concise and practical. If asked about technical settings, refer to the 'Settings' page. For deepfake analysis, refer to the 'Deepfake Detector' in 'Functions'."
+                            content: `You are ${aiName}, a premium AI Virtual Assistant for the 'Safe-Her' cyber security application. Your tone is empathetic, professional, and security-focused. Guide users on cyber harassment, deepfake detection, and using app features like SOS and filing reports. Keep responses concise and practical. If asked about technical settings, refer to the 'Settings' page. For deepfake analysis, refer to the 'Deepfake Detector' in 'Functions'.`
                         },
                         ...messages.map(m => ({
                             role: m.sender === 'user' ? 'user' : 'assistant',
@@ -112,8 +178,46 @@ const AIAssistant: React.FC = () => {
         }
     };
 
+    if (isLoadingName) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-background-light dark:bg-background-dark">
+                <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-display">
+            {/* Naming Overlay */}
+            {isNamingMode && (
+                <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xl flex items-center justify-center p-6">
+                    <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-8 shadow-2xl border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in duration-300">
+                        <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6">
+                            <span className="material-symbols-outlined text-4xl">edit_note</span>
+                        </div>
+                        <h2 className="text-2xl font-bold mb-2">Name Your Assistant</h2>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
+                            Give your personal cyber safety AI a unique name that resonates with you.
+                        </p>
+                        <input
+                            type="text"
+                            value={tempName}
+                            onChange={(e) => setTempName(e.target.value)}
+                            placeholder="e.g. Guardian, Aegis, Sentinel..."
+                            className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl py-4 px-4 text-base font-medium focus:ring-2 focus:ring-primary/20 transition-all mb-6"
+                            autoFocus
+                        />
+                        <button
+                            onClick={handleSaveName}
+                            disabled={!tempName.trim()}
+                            className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 disabled:opacity-50"
+                        >
+                            Set Assistant Name
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <header className="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
                 <div className="flex items-center gap-3 px-4 h-16">
@@ -127,7 +231,7 @@ const AIAssistant: React.FC = () => {
                         </div>
                         <div>
                             <div className="flex items-center gap-1">
-                                <h1 className="text-base font-bold">Aegis AI</h1>
+                                <h1 className="text-base font-bold">{aiName}</h1>
                                 <span className="material-symbols-outlined text-primary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
                             </div>
                             <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Active Assistant</p>
@@ -189,7 +293,7 @@ const AIAssistant: React.FC = () => {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                            placeholder="Ask Aegis something..."
+                            placeholder={`Ask ${aiName} something...`}
                             className="w-full bg-white dark:bg-slate-800 border-none rounded-2xl py-3.5 pl-4 pr-12 text-sm shadow-sm focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         />
                         <button
