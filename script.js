@@ -146,281 +146,280 @@ document.addEventListener('DOMContentLoaded', () => {
             if (next) showStep(next);
         });
     });
-});
 
-// Platform Contact Emails
-const platformEmails = {
-    'google': 'removals@google.com',
-    'facebook': 'legal@support.facebook.com',
-    'instagram': 'legal@support.instagram.com',
-    'tiktok': 'legal@tiktok.com',
-    'x': 'legal@x.com',
-    'whatsapp': 'grievance@whatsapp.com',
-    'telegram': 'legal@telegram.org',
-    'snapchat': 'legal@snapchat.com',
-    'reddit': 'legal@reddit.com',
-    'pinterest': 'legal@pinterest.com'
-};
+    // Platform Contact Emails
+    const platformEmails = {
+        'google': 'removals@google.com',
+        'facebook': 'legal@support.facebook.com',
+        'instagram': 'legal@support.instagram.com',
+        'tiktok': 'legal@tiktok.com',
+        'x': 'legal@x.com',
+        'whatsapp': 'grievance@whatsapp.com',
+        'telegram': 'legal@telegram.org',
+        'snapchat': 'legal@snapchat.com',
+        'reddit': 'legal@reddit.com',
+        'pinterest': 'legal@pinterest.com'
+    };
 
-let latestCaseData = null;
+    let latestCaseData = null;
 
-const platformKeywords = {
-    'google': ['google', 'youtube', 'goog'],
-    'facebook': ['facebook', 'fb.com'],
-    'instagram': ['instagram', 'insta', 'ig.me'],
-    'tiktok': ['tiktok'],
-    'x': ['x.com', 'twitter'],
-    'whatsapp': ['whatsapp', 'wa.me'],
-    'telegram': ['telegram', 't.me'],
-    'snapchat': ['snapchat', 'snap'],
-    'reddit': ['reddit'],
-    'pinterest': ['pinterest']
-};
+    const platformKeywords = {
+        'google': ['google', 'youtube', 'goog'],
+        'facebook': ['facebook', 'fb.com'],
+        'instagram': ['instagram', 'insta', 'ig.me'],
+        'tiktok': ['tiktok'],
+        'x': ['x.com', 'twitter'],
+        'whatsapp': ['whatsapp', 'wa.me'],
+        'telegram': ['telegram', 't.me'],
+        'snapchat': ['snapchat', 'snap'],
+        'reddit': ['reddit'],
+        'pinterest': ['pinterest']
+    };
 
-function verifyLinks(urlInputs) {
-    urlInputs.forEach((input, index) => {
-        setTimeout(() => {
-            const platformId = input.dataset.platform;
-            const url = input.value.trim().toLowerCase();
-            const statusEl = document.getElementById(`status-${platformId}`);
+    function verifyLinks(urlInputs) {
+        urlInputs.forEach((input, index) => {
+            setTimeout(() => {
+                const platformId = input.dataset.platform;
+                const url = input.value.trim().toLowerCase();
+                const statusEl = document.getElementById(`status-${platformId}`);
 
-            if (!statusEl) return;
+                if (!statusEl) return;
 
-            if (url === '') {
-                statusEl.textContent = 'Not Provided';
-                statusEl.style.color = '#94a3b8';
-            } else {
-                const keywords = platformKeywords[platformId] || [platformId];
-                const isMatch = keywords.some(k => url.includes(k));
-
-                if (isMatch) {
-                    statusEl.textContent = 'Search Found ✓';
-                    statusEl.style.color = '#16a34a';
+                if (url === '') {
+                    statusEl.textContent = 'Not Provided';
+                    statusEl.style.color = '#94a3b8';
                 } else {
-                    statusEl.textContent = 'Not Found ✗';
-                    statusEl.style.color = '#ef4444';
+                    const keywords = platformKeywords[platformId] || [platformId];
+                    const isMatch = keywords.some(k => url.includes(k));
+
+                    if (isMatch) {
+                        statusEl.textContent = 'Search Found ✓';
+                        statusEl.style.color = '#16a34a';
+                    } else {
+                        statusEl.textContent = 'Not Found ✗';
+                        statusEl.style.color = '#ef4444';
+                    }
                 }
-            }
 
-            // Enable continue button after last item
-            if (index === urlInputs.length - 1) {
-                const finishBtn = document.getElementById('finish-removal-btn');
-                if (finishBtn) {
-                    finishBtn.style.opacity = '1';
-                    finishBtn.style.pointerEvents = 'auto';
-                    finishBtn.textContent = 'Continue';
+                // Enable continue button after last item
+                if (index === urlInputs.length - 1) {
+                    const finishBtn = document.getElementById('finish-removal-btn');
+                    if (finishBtn) {
+                        finishBtn.style.opacity = '1';
+                        finishBtn.style.pointerEvents = 'auto';
+                        finishBtn.textContent = 'Continue';
+                    }
                 }
-            }
-        }, (index + 1) * 800);
-    });
-}
-
-// File Upload & Submit
-const uploadZone = document.getElementById('upload-zone');
-const fileInput = document.getElementById('file-input');
-const fileList = document.getElementById('file-list');
-const toUrlStepBtn = document.getElementById('to-url-step');
-const submitBtn = document.getElementById('sumbit-step-2');
-
-if (uploadZone && fileInput) {
-    uploadZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => {
-        handleFiles(fileInput.files);
-        fileInput.value = '';
-    });
-}
-
-async function handleFiles(files) {
-    for (const file of files) {
-        if (selectedFiles.length >= 20) break;
-        const arrayBuffer = await file.arrayBuffer();
-        const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-        const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        selectedFiles.push({ file, hash: hashHex });
+            }, (index + 1) * 800);
+        });
     }
-    renderFileList();
-}
 
-function renderFileList() {
-    if (!fileList) return;
-    fileList.innerHTML = '';
-    selectedFiles.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.style.padding = '10px';
-        div.style.borderBottom = '1px solid #eee';
-        div.style.fontSize = '0.9rem';
-        div.innerHTML = `<strong>${item.file.name}</strong><br><span style="color:#888; font-family:monospace; font-size:0.7rem;">${item.hash}</span>`;
-        fileList.appendChild(div);
-    });
-    if (submitBtn) submitBtn.disabled = false;
-}
+    // File Upload & Submit
+    const uploadZone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    const toUrlStepBtn = document.getElementById('to-url-step');
+    const submitBtn = document.getElementById('submit-step-2');
 
-if (toUrlStepBtn) {
-    toUrlStepBtn.addEventListener('click', () => {
-        const selectedPlatforms = Array.from(platformChecks)
-            .filter(c => c.checked)
-            .map(c => ({
-                id: c.value,
-                name: c.closest('.platform-item').querySelector('.platform-name').textContent
-            }));
+    if (uploadZone && fileInput) {
+        uploadZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => {
+            handleFiles(fileInput.files);
+            fileInput.value = '';
+        });
+    }
 
-        const container = document.getElementById('dynamic-url-inputs');
-        if (container) {
-            container.innerHTML = '';
-            selectedPlatforms.forEach(p => {
-                const div = document.createElement('div');
-                div.style.marginBottom = '10px';
-                div.innerHTML = `
+    async function handleFiles(files) {
+        for (const file of files) {
+            if (selectedFiles.length >= 20) break;
+            const arrayBuffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+            const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            selectedFiles.push({ file, hash: hashHex });
+        }
+        renderFileList();
+    }
+
+    function renderFileList() {
+        if (!fileList) return;
+        fileList.innerHTML = '';
+        selectedFiles.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.style.padding = '10px';
+            div.style.borderBottom = '1px solid #eee';
+            div.style.fontSize = '0.9rem';
+            div.innerHTML = `<strong>${item.file.name}</strong><br><span style="color:#888; font-family:monospace; font-size:0.7rem;">${item.hash}</span>`;
+            fileList.appendChild(div);
+        });
+        if (submitBtn) submitBtn.disabled = false;
+    }
+
+    if (toUrlStepBtn) {
+        toUrlStepBtn.addEventListener('click', () => {
+            const selectedPlatforms = Array.from(platformChecks)
+                .filter(c => c.checked)
+                .map(c => ({
+                    id: c.value,
+                    name: c.closest('.platform-item').querySelector('.platform-name').textContent
+                }));
+
+            const container = document.getElementById('dynamic-url-inputs');
+            if (container) {
+                container.innerHTML = '';
+                selectedPlatforms.forEach(p => {
+                    const div = document.createElement('div');
+                    div.style.marginBottom = '10px';
+                    div.innerHTML = `
                         <label style="display:block; font-size: 0.9rem; margin-bottom: 5px; color: #64748b; font-weight: 500;">${p.name} leaked link</label>
                         <input type="url" class="form-input platform-url-input" data-platform="${p.id}" placeholder="https://${p.id}.com/..." style="margin-bottom:0">
                     `;
-                container.appendChild(div);
+                    container.appendChild(div);
+                });
+            }
+            showStep('1-2b');
+        });
+    }
+
+    // Platform Selection Logic
+    const platformChecks = document.querySelectorAll('input[name="platform"]');
+    if (platformChecks) {
+        platformChecks.forEach(check => {
+            check.addEventListener('change', (e) => {
+                const item = e.target.closest('.platform-item');
+                if (e.target.checked) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+                const anyChecked = Array.from(platformChecks).some(c => c.checked);
+                if (toUrlStepBtn) toUrlStepBtn.disabled = !anyChecked;
             });
-        }
-        showStep('1-2b');
-    });
-}
+        });
+    }
 
-// Platform Selection Logic
-const platformChecks = document.querySelectorAll('input[name="platform"]');
-if (platformChecks) {
-    platformChecks.forEach(check => {
-        check.addEventListener('change', (e) => {
-            const item = e.target.closest('.platform-item');
-            if (e.target.checked) {
-                item.classList.add('selected');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', async () => {
+            const caseNum = 'SHI-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            const selectedPlatforms = Array.from(platformChecks).filter(c => c.checked).map(c => c.value);
+            const platformLinks = {};
+            document.querySelectorAll('.platform-url-input').forEach(input => {
+                if (input.value.trim() !== '') {
+                    platformLinks[input.dataset.platform] = input.value.trim();
+                }
+            });
+
+            const caseData = {
+                case_number: caseNum,
+                date_created: new Date().toLocaleDateString(),
+                platforms: selectedPlatforms,
+                platform_links: platformLinks,
+                hashes: selectedFiles.map(f => ({ name: f.file.name, hash: f.hash }))
+            };
+
+            submitBtn.textContent = 'Applying digital fingerprints...';
+            submitBtn.disabled = true;
+
+            // Artificial delay to simulate "applying fingerprints"
+            await new Promise(r => setTimeout(r, 1500));
+            submitBtn.textContent = 'Sending deletion requests...';
+            await new Promise(r => setTimeout(r, 1500));
+
+            if (supabase) {
+                const { error } = await supabase.from('cases').insert([caseData]);
+                if (error) {
+                    console.error('Supabase error:', error);
+                }
+            }
+
+            document.getElementById('case-number-display').textContent = caseNum;
+
+            const platformNames = Array.from(platformChecks)
+                .filter(c => c.checked)
+                .map(c => c.closest('.platform-item').querySelector('.platform-name').textContent);
+
+            let message = "Your deletion request has been successfully forwarded to the specific platforms you selected: ";
+            if (platformNames.length === 1) {
+                message += `<strong>${platformNames[0]}</strong>`;
+            } else if (platformNames.length === 2) {
+                message += `<strong>${platformNames[0]}</strong> and <strong>${platformNames[1]}</strong>`;
             } else {
-                item.classList.remove('selected');
+                const last = platformNames.pop();
+                message += `<strong>${platformNames.join(', ')}</strong>, and <strong>${last}</strong>`;
             }
-            const anyChecked = Array.from(platformChecks).some(c => c.checked);
-            if (toUrlStepBtn) toUrlStepBtn.disabled = !anyChecked;
+            message += ". Our system has contacted their official email addresses for immediate action.";
+
+            const msgEl = document.getElementById('success-platform-msg');
+            if (msgEl) msgEl.innerHTML = message;
+
+            latestCaseData = caseData;
+
+            showStep('success');
+            document.querySelector('.wizard-header').style.display = 'none';
         });
-    });
-}
+    }
 
-if (submitBtn) {
-    submitBtn.addEventListener('click', async () => {
-        const caseNum = 'SHI-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-        const selectedPlatforms = Array.from(platformChecks).filter(c => c.checked).map(c => c.value);
-        const platformLinks = {};
-        document.querySelectorAll('.platform-url-input').forEach(input => {
-            if (input.value.trim() !== '') {
-                platformLinks[input.dataset.platform] = input.value.trim();
-            }
-        });
+    // PDF Generation
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    if (downloadPdfBtn) {
+        downloadPdfBtn.addEventListener('click', () => {
+            if (!latestCaseData) return;
 
-        const caseData = {
-            case_number: caseNum,
-            date_created: new Date().toLocaleDateString(),
-            platforms: selectedPlatforms,
-            platform_links: platformLinks,
-            hashes: selectedFiles.map(f => ({ name: f.file.name, hash: f.hash }))
-        };
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const margin = 20;
+            let y = 30;
 
-        submitBtn.textContent = 'Applying digital fingerprints...';
-        submitBtn.disabled = true;
+            // Header
+            doc.setFontSize(22);
+            doc.setTextColor(22, 101, 52); // SafeHer Green
+            doc.text('SafeHer India', margin, y);
 
-        // Artificial delay to simulate "applying fingerprints"
-        await new Promise(r => setTimeout(r, 1500));
-        submitBtn.textContent = 'Sending deletion requests...';
-        await new Promise(r => setTimeout(r, 1500));
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139);
+            y += 10;
+            doc.text(`System ID: SHI-AUTH-${latestCaseData.case_number.split('-')[1]}`, margin, y);
+            doc.text(`Date Issued: ${latestCaseData.date_created}`, margin, y + 5);
 
-        if (supabase) {
-            const { error } = await supabase.from('cases').insert([caseData]);
-            if (error) {
-                console.error('Supabase error:', error);
-            }
-        }
-
-        document.getElementById('case-number-display').textContent = caseNum;
-
-        const platformNames = Array.from(platformChecks)
-            .filter(c => c.checked)
-            .map(c => c.closest('.platform-item').querySelector('.platform-name').textContent);
-
-        let message = "Your deletion request has been successfully forwarded to the specific platforms you selected: ";
-        if (platformNames.length === 1) {
-            message += `<strong>${platformNames[0]}</strong>`;
-        } else if (platformNames.length === 2) {
-            message += `<strong>${platformNames[0]}</strong> and <strong>${platformNames[1]}</strong>`;
-        } else {
-            const last = platformNames.pop();
-            message += `<strong>${platformNames.join(', ')}</strong>, and <strong>${last}</strong>`;
-        }
-        message += ". Our system has contacted their official email addresses for immediate action.";
-
-        const msgEl = document.getElementById('success-platform-msg');
-        if (msgEl) msgEl.innerHTML = message;
-
-        latestCaseData = caseData;
-
-        showStep('success');
-        document.querySelector('.wizard-header').style.display = 'none';
-    });
-}
-
-// PDF Generation
-const downloadPdfBtn = document.getElementById('download-pdf-btn');
-if (downloadPdfBtn) {
-    downloadPdfBtn.addEventListener('click', () => {
-        if (!latestCaseData) return;
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const margin = 20;
-        let y = 30;
-
-        // Header
-        doc.setFontSize(22);
-        doc.setTextColor(22, 101, 52); // SafeHer Green
-        doc.text('SafeHer India', margin, y);
-
-        doc.setFontSize(10);
-        doc.setTextColor(100, 116, 139);
-        y += 10;
-        doc.text(`System ID: SHI-AUTH-${latestCaseData.case_number.split('-')[1]}`, margin, y);
-        doc.text(`Date Issued: ${latestCaseData.date_created}`, margin, y + 5);
-
-        y += 20;
-        doc.setDrawColor(226, 232, 240);
-        doc.line(margin, y, 190, y);
-
-        y += 15;
-        doc.setFontSize(14);
-        doc.setTextColor(30, 41, 59);
-        doc.setFont("helvetica", "bold");
-        doc.text('Official Deletion Request Summary', margin, y);
-
-        latestCaseData.platforms.forEach((platformId) => {
-            const platformName = platformId.charAt(0).toUpperCase() + platformId.slice(1);
-            const contactEmail = platformEmails[platformId] || 'legal@support.com';
-            const link = latestCaseData.platform_links[platformId] || 'Not Provided';
-
-            if (y > 250) {
-                doc.addPage();
-                y = 30;
-            }
+            y += 20;
+            doc.setDrawColor(226, 232, 240);
+            doc.line(margin, y, 190, y);
 
             y += 15;
-            doc.setFontSize(12);
+            doc.setFontSize(14);
             doc.setTextColor(30, 41, 59);
             doc.setFont("helvetica", "bold");
-            doc.text(`TO: ${platformName} Legal/Compliance Team`, margin, y);
+            doc.text('Official Deletion Request Summary', margin, y);
 
-            y += 7;
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.text(`Contact: ${contactEmail}`, margin, y);
+            latestCaseData.platforms.forEach((platformId) => {
+                const platformName = platformId.charAt(0).toUpperCase() + platformId.slice(1);
+                const contactEmail = platformEmails[platformId] || 'legal@support.com';
+                const link = latestCaseData.platform_links[platformId] || 'Not Provided';
 
-            y += 10;
-            const content = `Subject: Formal Request for Removal of Non-Consensual Intimate Imagery (Case #${latestCaseData.case_number})\n\nDear ${platformName} Support Team,\n\nWe are formally requesting the immediate removal of the content hosted at the following URL:\n\n${link}\n\nThis content consists of non-consensual intimate imagery/material which violates your community guidelines and international digital safety standards. SafeHer India has verified this request, and a digital fingerprint has been generated for case archival.\n\nWe request that you process this takedown immediately to prevent further harm. Please confirm the removal citing Case Number ${latestCaseData.case_number}.\n\nSincerely,\nDigital Safety Compliance Officer\nSafeHer India Automation System`;
+                if (y > 250) {
+                    doc.addPage();
+                    y = 30;
+                }
 
-            const splitText = doc.splitTextToSize(content, 170);
-            doc.text(splitText, margin, y);
-            y += (splitText.length * 5) + 5;
+                y += 15;
+                doc.setFontSize(12);
+                doc.setTextColor(30, 41, 59);
+                doc.setFont("helvetica", "bold");
+                doc.text(`TO: ${platformName} Legal/Compliance Team`, margin, y);
+
+                y += 7;
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(10);
+                doc.text(`Contact: ${contactEmail}`, margin, y);
+
+                y += 10;
+                const content = `Subject: Formal Request for Removal of Non-Consensual Intimate Imagery (Case #${latestCaseData.case_number})\n\nDear ${platformName} Support Team,\n\nWe are formally requesting the immediate removal of the content hosted at the following URL:\n\n${link}\n\nThis content consists of non-consensual intimate imagery/material which violates your community guidelines and international digital safety standards. SafeHer India has verified this request, and a digital fingerprint has been generated for case archival.\n\nWe request that you process this takedown immediately to prevent further harm. Please confirm the removal citing Case Number ${latestCaseData.case_number}.\n\nSincerely,\nDigital Safety Compliance Officer\nSafeHer India Automation System`;
+
+                const splitText = doc.splitTextToSize(content, 170);
+                doc.text(splitText, margin, y);
+                y += (splitText.length * 5) + 5;
+            });
+
+            doc.save(`SafeHer_Deletion_Request_${latestCaseData.case_number}.pdf`);
         });
-
-        doc.save(`SafeHer_Deletion_Request_${latestCaseData.case_number}.pdf`);
-    });
-}
+    }
 });
