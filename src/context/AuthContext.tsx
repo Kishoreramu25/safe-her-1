@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Session, User } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 
 interface AuthContextType {
     session: Session | null;
@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         // Fetch current session
         const fetchSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await (supabase.auth as any).getSession();
             setSession(session);
             setUser(session?.user ?? null);
             if (session?.user) {
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchSession();
 
         // Listen for changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = (supabase.auth as any).onAuthStateChange((_event: any, session: any) => {
             setSession(session);
             setUser(session?.user ?? null);
             if (session?.user) {
@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const signOut = async () => {
-        await supabase.auth.signOut();
+        await (supabase.auth as any).signOut();
         setRole(null);
         setUser(null);
         setSession(null);

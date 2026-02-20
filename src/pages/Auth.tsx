@@ -28,7 +28,7 @@ const Auth: React.FC = () => {
         try {
             if (isLoginMode) {
                 // LOGIN LOGIC
-                const { error: signInError } = await supabase.auth.signInWithPassword({
+                const { error: signInError } = await (supabase.auth as any).signInWithPassword({
                     email: formData.email,
                     password: formData.password
                 });
@@ -45,7 +45,7 @@ const Auth: React.FC = () => {
 
             } else {
                 // SIGN UP LOGIC
-                const { error: signUpError } = await supabase.auth.signUp({
+                const { error: signUpError } = await (supabase.auth as any).signUp({
                     email: formData.email,
                     password: formData.password,
                     options: {
