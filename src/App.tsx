@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { AuthProvider } from '@/context/AuthContext';
 import RoleSelection from '@/pages/RoleSelection';
+import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
 import ComplaintStep1 from '@/pages/ComplaintStep1';
 import ComplaintStep2 from '@/pages/ComplaintStep2';
@@ -24,7 +25,7 @@ import VoiceListener from '@/components/VoiceListener';
 const AppContent = () => {
   const location = useLocation();
   // Hide nav on specific full-screen or auth pages
-  const hideNavPaths = ['/', '/auth', '/sos', '/report/processing', '/report/success', '/functions/deepfake', '/ai-assistant', '/takedown-tracker'];
+  const hideNavPaths = ['/', '/landing', '/auth', '/sos', '/report/processing', '/report/success', '/functions/deepfake', '/ai-assistant', '/takedown-tracker'];
   const showNav = !hideNavPaths.includes(location.pathname);
 
   return (
@@ -33,6 +34,7 @@ const AppContent = () => {
       <div>
         <Routes>
           <Route path="/" element={<RoleSelection />} />
+          <Route path="/landing" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/report/step1" element={<ComplaintStep1 />} />
           <Route path="/report/step2" element={<ComplaintStep2 />} />

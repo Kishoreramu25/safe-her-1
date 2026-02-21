@@ -7,8 +7,12 @@ const RoleSelection: React.FC = () => {
     const [selectedRole, setSelectedRole] = useState<'public' | 'official'>('public');
 
     const handleContinue = () => {
-        // Navigate to Auth page and pass the role in state
-        navigate('/auth', { state: { role: selectedRole } });
+        // Navigate to Landing if public, or Auth if official
+        if (selectedRole === 'public') {
+            navigate('/landing');
+        } else {
+            navigate('/auth', { state: { role: selectedRole } });
+        }
     };
 
     return (
