@@ -11,13 +11,14 @@ const SideNav: React.FC = () => {
     const isActive = (path: string) => location.pathname === path;
 
     const navItems = [
-        { path: '/', label: 'SafeHer Home', icon: 'shield_person' },
+        { path: '/', label: 'Role Selection', icon: 'shield_person' },
+        { path: '/landing', label: 'Start Case', icon: 'add_circle' },
         { path: '/dashboard', label: 'Monitor Cases', icon: 'home' },
         { path: '/my-reports', label: 'My Reports', icon: 'history' },
         { path: '/functions', label: 'Functions', icon: 'grid_view' },
         { path: '/ai-assistant', label: 'Ask AI', icon: 'smart_toy' },
         { path: '/settings', label: 'Settings', icon: 'settings' },
-        { path: '/', label: 'Request Deletion', icon: 'delete' },
+        { path: '/landing', label: 'Request Deletion', icon: 'delete' },
     ];
 
     return (

@@ -1,8 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 const Landing: React.FC = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display">
@@ -26,14 +28,26 @@ const Landing: React.FC = () => {
 
                     <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-12">
                         <button
-                            onClick={() => navigate('/auth', { state: { role: 'public', redirectTo: '/takedown-tracker' } })}
+                            onClick={() => {
+                                if (user) {
+                                    navigate('/report/step1');
+                                } else {
+                                    navigate('/auth', { state: { role: 'public', redirectTo: '/report/step1' } });
+                                }
+                            }}
                             className="w-full md:w-auto px-10 py-5 bg-primary text-white text-xl font-bold rounded-2xl shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 group"
                         >
                             Request Deletion
                             <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
                         </button>
                         <button
-                            onClick={() => navigate('/dashboard')}
+                            onClick={() => {
+                                if (user) {
+                                    navigate('/my-reports');
+                                } else {
+                                    navigate('/auth', { state: { role: 'public', redirectTo: '/my-reports' } });
+                                }
+                            }}
                             className="w-full md:w-auto px-10 py-5 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xl font-bold rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary transition-all active:scale-[0.98]"
                         >
                             Track Status
