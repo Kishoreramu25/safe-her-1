@@ -31,11 +31,32 @@ const CaseReview: React.FC = () => {
         }
     };
 
+    const handleStatusUpdate = async (newStatus: string) => {
+        setLoading(true);
+        try {
+            const { error } = await supabase
+                .from('reports')
+                .update({ status: newStatus })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            // Refresh report data
+            fetchReport();
+            alert(`Case status updated to ${newStatus}`);
+        } catch (error: any) {
+            console.error('Error updating status:', error);
+            alert(`Failed to update status: ${error.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-background-light dark:bg-background-dark">
                 <div className="size-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-slate-500">Decrypting Case File...</p>
+                <p className="mt-4 text-xs font-bold uppercase tracking-widest text-slate-500">Processing Request...</p>
             </div>
         );
     }
@@ -69,7 +90,7 @@ const CaseReview: React.FC = () => {
             </div>
 
             {/* Main Content */}
-            <main className="pb-32 flex-1 overflow-y-auto no-scrollbar">
+            <main className="pb-40 flex-1 overflow-y-auto no-scrollbar">
                 {/* Top Metrics / Risk Score */}
                 <div className="px-4 pt-6 grid grid-cols-2 gap-4">
                     <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex flex-col justify-between h-32">
@@ -191,25 +212,38 @@ const CaseReview: React.FC = () => {
             {/* Action Bar */}
             <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 p-4 pb-8">
                 <div className="max-w-md mx-auto grid grid-cols-2 gap-3 mb-3">
-                    <button className="flex items-center justify-center gap-2 h-12 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 rounded-xl font-bold text-sm transition-colors">
+                    <button
+                        onClick={() => alert('Feature coming soon: Requesting more info from reporter.')}
+                        className="flex items-center justify-center gap-2 h-12 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 rounded-xl font-bold text-sm transition-colors"
+                    >
                         <span className="material-symbols-outlined text-sm">help</span>
                         Request Info
                     </button>
-                    <button className="flex items-center justify-center gap-2 h-12 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 rounded-xl font-bold text-sm transition-colors">
+                    <button
+                        onClick={() => handleStatusUpdate('escalated')}
+                        className="flex items-center justify-center gap-2 h-12 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-200 rounded-xl font-bold text-sm transition-colors"
+                    >
                         <span className="material-symbols-outlined text-sm">trending_up</span>
                         Escalate
                     </button>
                 </div>
                 <div className="max-w-md mx-auto grid grid-cols-4 gap-3">
-                    <button className="col-span-3 flex items-center justify-center gap-2 h-14 bg-primary text-white rounded-xl font-bold text-base shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+                    <button
+                        onClick={() => handleStatusUpdate('review')}
+                        className="col-span-3 flex items-center justify-center gap-2 h-14 bg-primary text-white rounded-xl font-bold text-base shadow-lg shadow-primary/20 active:scale-[0.98] transition-all"
+                    >
                         <span className="material-symbols-outlined">assignment_turned_in</span>
                         Mark Under Review
                     </button>
-                    <button className="col-span-1 flex items-center justify-center h-14 bg-red-500/10 text-red-500 rounded-xl font-bold transition-colors">
-                        <span className="material-symbols-outlined">close</span>
+                    <button
+                        onClick={() => handleStatusUpdate('resolved')}
+                        className="col-span-1 flex items-center justify-center h-14 bg-emerald-500/10 text-emerald-500 rounded-xl font-bold transition-colors"
+                    >
+                        <span className="material-symbols-outlined">check_circle</span>
                     </button>
                 </div>
             </div>
+
         </div>
     );
 };
