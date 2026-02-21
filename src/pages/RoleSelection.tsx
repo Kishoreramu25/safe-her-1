@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/LanguageContext';
 
 const RoleSelection: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [selectedRole, setSelectedRole] = useState<'public' | 'official'>('public');
 
     const handleContinue = () => {
@@ -21,17 +23,17 @@ const RoleSelection: React.FC = () => {
                 <div className="mb-6">
                     <img src="/logo.png" alt="SafeHer India Logo" className="w-40 h-auto drop-shadow-xl" />
                 </div>
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 uppercase">SAFE HER INDIA</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 uppercase">{t.appName}</h1>
                 <p className="text-slate-500 dark:text-slate-400 text-sm max-w-[300px] leading-relaxed">
-                    From Fear to Freedom — Protecting Every Mother. Empowering Every Girl.
+                    {t.tagline}
                 </p>
             </header>
 
             {/* Main Content */}
             <main className="flex-1 px-6 flex flex-col gap-6">
                 <div className="mb-2">
-                    <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Who are you?</h2>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Select your profile to continue to the dashboard.</p>
+                    <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{t.whoAreYou}</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{t.selectProfile}</p>
                 </div>
 
                 <div className="space-y-4">
@@ -53,8 +55,8 @@ const RoleSelection: React.FC = () => {
                                 <span className="material-symbols-outlined text-3xl">person</span>
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-lg font-bold text-slate-900 dark:text-white">Public User</span>
-                                <span className="text-sm text-slate-500 dark:text-slate-400">Report crimes & access resources</span>
+                                <span className="text-lg font-bold text-slate-900 dark:text-white">{t.publicUser}</span>
+                                <span className="text-sm text-slate-500 dark:text-slate-400">{t.publicDesc}</span>
                             </div>
                         </div>
                         <div className={cn(
@@ -83,8 +85,8 @@ const RoleSelection: React.FC = () => {
                                 <span className="material-symbols-outlined text-3xl">admin_panel_settings</span>
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-lg font-bold text-slate-900 dark:text-white">Cyber Official</span>
-                                <span className="text-sm text-slate-500 dark:text-slate-400">Investigate reports & manage cases</span>
+                                <span className="text-lg font-bold text-slate-900 dark:text-white">{t.cyberOfficial}</span>
+                                <span className="text-sm text-slate-500 dark:text-slate-400">{t.cyberDesc}</span>
                             </div>
                         </div>
                         <div className={cn(
@@ -117,12 +119,12 @@ const RoleSelection: React.FC = () => {
                     onClick={handleContinue}
                     className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
                 >
-                    Get Started
+                    {t.getStarted}
                 </button>
                 <div className="flex gap-6 mt-2">
-                    <a href="#" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">Help Center</a>
+                    <a href="#" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">{t.helpCenter}</a>
                     <div className="w-px h-4 bg-slate-300 dark:bg-slate-700"></div>
-                    <a href="#" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">App Language: Your Mothertongue</a>
+                    <a href="/settings" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">{t.appLanguage}</a>
                 </div>
                 <p className="text-[11px] text-slate-400 dark:text-slate-600 mt-2 text-center">
                     By continuing, you agree to the CyberShield <br />

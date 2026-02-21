@@ -2,23 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import SOSButton from '@/components/SOSButton';
+import { useLanguage } from '@/context/LanguageContext';
 
 const SideNav: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
 
     const navItems = [
-        { path: '/', label: 'Role Selection', icon: 'shield_person' },
-        { path: '/landing', label: 'Start Case', icon: 'add_circle' },
-        { path: '/dashboard', label: 'Monitor Cases', icon: 'home' },
-        { path: '/my-reports', label: 'My Reports', icon: 'history' },
-        { path: '/functions', label: 'Functions', icon: 'grid_view' },
-        { path: '/ai-assistant', label: 'Ask AI', icon: 'smart_toy' },
-        { path: '/settings', label: 'Settings', icon: 'settings' },
-        { path: '/landing', label: 'Request Deletion', icon: 'delete' },
+        { path: '/', label: t.roleSelection, icon: 'shield_person' },
+        { path: '/landing', label: t.startCase, icon: 'add_circle' },
+        { path: '/dashboard', label: t.monitorCases, icon: 'home' },
+        { path: '/my-reports', label: t.myReports, icon: 'history' },
+        { path: '/functions', label: t.functions, icon: 'grid_view' },
+        { path: '/ai-assistant', label: t.askAI, icon: 'smart_toy' },
+        { path: '/settings', label: t.settings, icon: 'settings' },
+        { path: '/landing', label: t.requestDeletionNav, icon: 'delete' },
     ];
 
     return (

@@ -1,13 +1,22 @@
 import React, { useState, useRef } from 'react';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
+import type { Language } from '@/lib/translations';
 import type { Theme } from '@/lib/themes';
 import { themes } from '@/lib/themes';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
+const LANGUAGES: { code: Language; name: string; nativeName: string; flag: string }[] = [
+    { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+    { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்', flag: '🇮🇳' },
+    { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' },
+];
+
 const Settings: React.FC = () => {
     const { activeTheme, setTheme, mode, toggleMode } = useTheme();
+    const { language, setLanguage, t } = useLanguage();
     const navigate = useNavigate();
     const [sosKeyword, setSosKeyword] = useState('Help Me');
     const [emergencyEmail, setEmergencyEmail] = useState('');
@@ -147,7 +156,7 @@ const Settings: React.FC = () => {
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen pb-24 font-display">
             <header className="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-4">
-                <h1 className="text-xl font-bold">Settings</h1>
+                <h1 className="text-xl font-bold">{t.settingsTitle}</h1>
             </header>
 
             <main className="px-4 py-6 space-y-8">
@@ -200,6 +209,38 @@ const Settings: React.FC = () => {
                                     <div className="flex-1">
                                         <div className="flex items-center gap-2">
                                             <h3 className="font-bold text-sm">{theme.name}</h3>
+                                            {isSelected && <span className="material-symbols-outlined text-primary text-lg">check_circle</span>}
+                                        </div>
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </section>
+
+                {/* Language Selection Section */}
+                <section>
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">{t.languageSetting}</h2>
+                    <p className="text-xs text-slate-400 mb-4">{t.languageSettingDesc}</p>
+                    <div className="grid grid-cols-1 gap-3">
+                        {LANGUAGES.map((lang) => {
+                            const isSelected = language === lang.code;
+                            return (
+                                <button
+                                    key={lang.code}
+                                    onClick={() => setLanguage(lang.code)}
+                                    className={cn(
+                                        "flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all",
+                                        isSelected
+                                            ? "border-primary bg-primary/5 shadow-sm"
+                                            : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 hover:border-primary/50"
+                                    )}
+                                >
+                                    <span className="text-3xl">{lang.flag}</span>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-sm">{lang.nativeName}</h3>
+                                            <span className="text-xs text-slate-400">({lang.name})</span>
                                             {isSelected && <span className="material-symbols-outlined text-primary text-lg">check_circle</span>}
                                         </div>
                                     </div>
