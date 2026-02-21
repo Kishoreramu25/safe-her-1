@@ -22,10 +22,8 @@ const RoleSelection: React.FC = () => {
 
             {/* Header */}
             <header className="px-6 pt-4 pb-8 flex flex-col items-center text-center">
-                <div className="bg-primary/10 p-3 rounded-xl mb-6">
-                    <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                        shield_lock
-                    </span>
+                <div className="mb-6">
+                    <img src="/logo.png" alt="SafeHer India Logo" className="w-40 h-auto drop-shadow-xl" />
                 </div>
                 <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 uppercase">SAFE HER INDIA</h1>
                 <p className="text-slate-500 dark:text-slate-400 text-sm max-w-[300px] leading-relaxed">

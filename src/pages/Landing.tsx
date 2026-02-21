@@ -7,14 +7,8 @@ const Landing: React.FC = () => {
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display">
             {/* Header */}
-            <header className="py-8 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-center">
-                <div className="flex items-center justify-center gap-2">
-                    <span className="text-3xl font-extrabold tracking-tighter">
-                        <span className="text-primary italic">Safe</span>
-                        <span className="text-slate-900 dark:text-white">Her</span>
-                        <span className="text-slate-400 font-normal ml-1">India</span>
-                    </span>
-                </div>
+            <header className="py-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-center">
+                <img src="/logo.png" alt="SafeHer India Logo" className="h-16 w-auto" />
             </header>
 
             <main className="max-w-4xl mx-auto px-6 py-20">

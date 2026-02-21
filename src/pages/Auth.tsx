@@ -93,9 +93,8 @@ const Auth: React.FC = () => {
             <main className="w-full max-w-[430px] flex flex-col px-6 pt-12 pb-12">
                 {/* Header / Logo Section */}
                 <div className="flex flex-col items-center mb-8">
-                    <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 relative">
-                        <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
-                        <span className="material-symbols-outlined text-primary text-5xl relative z-10">shield_lock</span>
+                    <div className="w-24 h-24 mb-6">
+                        <img src="/logo.png" alt="SafeHer India Logo" className="w-full h-full object-contain drop-shadow-lg" />
                     </div>
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
                         {isLoginMode ? 'Welcome Back' : 'Secure Access'}
