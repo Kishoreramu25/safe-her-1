@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Processing: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [logs, setLogs] = useState<string[]>([]);
 
     useEffect(() => {
@@ -39,7 +41,7 @@ const Processing: React.FC = () => {
                 </button>
                 <div className="flex flex-col items-center">
                     <span className="text-[10px] uppercase tracking-widest font-bold text-primary mb-1 flex items-center gap-1">
-                        <span className="size-1.5 rounded-full bg-primary animate-pulse"></span> Live Analysis
+                        <span className="size-1.5 rounded-full bg-primary animate-pulse"></span> {t.liveAnalysis}
                     </span>
                     <h1 className="text-sm font-semibold text-slate-500 dark:text-slate-400">Report ID: #8821-X</h1>
                 </div>
@@ -68,9 +70,9 @@ const Processing: React.FC = () => {
 
                 {/* Status Info */}
                 <div className="text-center space-y-2">
-                    <h2 className="text-2xl font-bold tracking-tight">Deep Analysis in Progress</h2>
+                    <h2 className="text-2xl font-bold tracking-tight">{t.deepAnalysisProgress}</h2>
                     <p className="text-slate-500 dark:text-slate-400 text-sm max-w-[280px] mx-auto leading-relaxed">
-                        Our AI is currently auditing the submitted evidence for cyber threats and harassment patterns.
+                        {t.deepAnalysisDesc}
                     </p>
                 </div>
 
@@ -83,7 +85,7 @@ const Processing: React.FC = () => {
                         </div>
                         <div className="flex-1">
                             <div className="flex justify-between items-center mb-1">
-                                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">OCR Extraction</span>
+                                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{t.ocrExtraction}</span>
                                 <span className="text-xs font-bold text-primary">COMPLETE</span>
                             </div>
                             <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -99,7 +101,7 @@ const Processing: React.FC = () => {
                         </div>
                         <div className="flex-1">
                             <div className="flex justify-between items-center mb-1">
-                                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Pattern Matching</span>
+                                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{t.threatMapping}</span>
                                 <span className="text-xs font-bold text-slate-100">65%</span>
                             </div>
                             <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">

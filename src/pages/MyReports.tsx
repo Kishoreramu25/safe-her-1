@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface Report {
     id: string;
@@ -14,6 +15,7 @@ interface Report {
 
 const MyReports: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -51,14 +53,14 @@ const MyReports: React.FC = () => {
                 <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
                     <span className="material-symbols-outlined">arrow_back</span>
                 </button>
-                <h1 className="text-xl font-bold">My Filed Reports</h1>
+                <h1 className="text-xl font-bold">{t.myFiledReports}</h1>
             </header>
 
             <main className="flex-1 p-4 space-y-4 pb-24">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20">
                         <div className="size-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                        <p className="text-xs text-slate-500 mt-4 font-bold uppercase tracking-widest">Loading History...</p>
+                        <p className="text-xs text-slate-500 mt-4 font-bold uppercase tracking-widest">{t.loadingHistory}</p>
                     </div>
                 ) : reports.length > 0 ? (
                     reports.map((report) => (
@@ -69,7 +71,7 @@ const MyReports: React.FC = () => {
                         >
                             <div className="flex justify-between items-start mb-2">
                                 <div>
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Case ID</span>
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.caseId}</span>
                                     <h3 className="text-sm font-bold text-primary font-mono lowercase">#{report.id.slice(0, 8)}</h3>
                                 </div>
                                 <div className={cn(
@@ -94,7 +96,7 @@ const MyReports: React.FC = () => {
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-1 text-primary group-hover:translate-x-1 transition-transform">
-                                    <span className="text-[10px] font-bold uppercase">Track Progress</span>
+                                    <span className="text-[10px] font-bold uppercase">{t.trackProgress}</span>
                                     <span className="material-symbols-outlined text-[14px]">chevron_right</span>
                                 </div>
                             </div>
@@ -105,13 +107,13 @@ const MyReports: React.FC = () => {
                         <div className="size-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6">
                             <span className="material-symbols-outlined text-4xl text-slate-300">description_off</span>
                         </div>
-                        <h2 className="text-lg font-bold">No Reports Found</h2>
-                        <p className="text-sm text-slate-500 mt-2">You haven't filed any cybercrime reports yet.</p>
+                        <h2 className="text-lg font-bold">{t.noReportsFound}</h2>
+                        <p className="text-sm text-slate-500 mt-2">{t.noReportsDesc}</p>
                         <button
                             onClick={() => navigate('/report/step1')}
                             className="mt-8 px-8 py-3 bg-primary text-white rounded-xl font-bold transition-all active:scale-95"
                         >
-                            File a Report
+                            {t.fileAReport}
                         </button>
                     </div>
                 )}

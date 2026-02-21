@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
+import { useLanguage } from '@/context/LanguageContext';
 
 const ComplaintStep1: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
     const [category, setCategory] = useState<string>('');
     const [files, setFiles] = useState<File[]>([]);
@@ -78,14 +80,14 @@ const ComplaintStep1: React.FC = () => {
                     <button onClick={() => navigate(-1)} className="flex items-center justify-center p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
                         <span className="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back</span>
                     </button>
-                    <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">Report an Incident</h1>
+                    <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">{t.reportAnIncident}</h1>
                 </div>
 
                 {/* Progress Bar Component */}
                 <div className="px-4 pb-4 max-w-md mx-auto">
                     <div className="flex justify-between items-center mb-2">
-                        <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Step 1 of 4</p>
-                        <p className="text-sm font-bold text-primary">25% Complete</p>
+                        <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{t.step1of4}</p>
+                        <p className="text-sm font-bold text-primary">{t.complete25}</p>
                     </div>
                     <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                         <div className="h-full bg-primary rounded-full" style={{ width: '25%' }}></div>
@@ -97,8 +99,8 @@ const ComplaintStep1: React.FC = () => {
                 {/* Section: Platform Selection */}
                 <section>
                     <div className="mb-4">
-                        <h2 className="text-xl font-bold">Where did this happen?</h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Select all platforms where the incident occurred.</p>
+                        <h2 className="text-xl font-bold">{t.wherePlatform}</h2>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t.selectAllPlatforms}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                         {[
@@ -139,7 +141,7 @@ const ComplaintStep1: React.FC = () => {
                         >
                             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
                                 <span className="material-symbols-outlined text-primary text-3xl">more_horiz</span>
-                                <span className="text-primary font-bold text-sm">Other Platform</span>
+                                <span className="text-primary font-bold text-sm">{t.otherPlatform}</span>
                             </div>
                             {selectedPlatforms.includes('other') && (
                                 <div className="absolute top-2 right-2 bg-primary rounded-full">
@@ -153,8 +155,8 @@ const ComplaintStep1: React.FC = () => {
                 {/* Section: Incident Category */}
                 <section>
                     <div className="mb-4">
-                        <h2 className="text-xl font-bold">Incident Category</h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">What type of cyber crime are you reporting?</p>
+                        <h2 className="text-xl font-bold">{t.incidentCategory}</h2>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t.whatTypeCrime}</p>
                     </div>
                     <div className="relative">
                         <select
@@ -162,13 +164,13 @@ const ComplaintStep1: React.FC = () => {
                             onChange={(e) => setCategory(e.target.value)}
                             className="w-full h-14 pl-4 pr-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary appearance-none font-medium"
                         >
-                            <option disabled value="">Select a category</option>
-                            <option value="financial">Financial Fraud / Online Scam</option>
-                            <option value="harassment">Cyber Bullying / Harassment</option>
-                            <option value="identity">Identity Theft / Impersonation</option>
-                            <option value="hacking">Hacking / Unauthorized Access</option>
-                            <option value="child">Child Safety Related</option>
-                            <option value="misleading">Misleading Content / Fake News</option>
+                            <option disabled value="">{t.selectCategory}</option>
+                            <option value="financial">{t.financialFraud}</option>
+                            <option value="harassment">{t.cyberBullying}</option>
+                            <option value="identity">{t.identityTheft}</option>
+                            <option value="hacking">{t.hacking}</option>
+                            <option value="child">{t.childSafety}</option>
+                            <option value="misleading">{t.misleadingContent}</option>
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
                             <span className="material-symbols-outlined text-slate-500">expand_more</span>
@@ -179,8 +181,8 @@ const ComplaintStep1: React.FC = () => {
                 {/* Section: Evidence Upload */}
                 <section>
                     <div className="mb-4">
-                        <h2 className="text-xl font-bold">Upload Evidence</h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Attach screenshots, chat logs, or documents.</p>
+                        <h2 className="text-xl font-bold">{t.uploadEvidence}</h2>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t.attachFiles}</p>
                     </div>
                     <div className="w-full">
                         <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
@@ -188,8 +190,8 @@ const ComplaintStep1: React.FC = () => {
                                 <div className="p-3 bg-primary/10 rounded-full mb-3">
                                     <span className="material-symbols-outlined text-primary text-3xl">cloud_upload</span>
                                 </div>
-                                <p className="mb-1 text-sm font-semibold">Tap to upload files</p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">JPG, PNG, PDF, or MP4 (Max 20MB)</p>
+                                <p className="mb-1 text-sm font-semibold">{t.tapToUpload}</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">{t.fileTypes}</p>
                             </div>
                             <input type="file" className="hidden" multiple onChange={handleFileChange} />
                         </label>
@@ -211,7 +213,7 @@ const ComplaintStep1: React.FC = () => {
                     {files.length === 0 && (
                         <div className="mt-4 flex flex-col items-center justify-center py-6 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/20">
                             <span className="material-symbols-outlined text-slate-300 text-3xl mb-1">attachment</span>
-                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter">No evidence uploaded yet</p>
+                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-tighter">{t.noEvidence}</p>
                         </div>
                     )}
                 </section>
@@ -228,7 +230,7 @@ const ComplaintStep1: React.FC = () => {
                             loading ? "bg-primary/70 cursor-not-allowed" : "bg-primary hover:bg-primary/90"
                         )}
                     >
-                        {loading ? 'Uploading Evidence...' : 'Continue to Details'}
+                        {loading ? t.uploadingEvidence : t.continueToDetails}
                         {!loading && <span className="material-symbols-outlined">arrow_forward</span>}
                     </button>
                 </div>

@@ -163,8 +163,8 @@ const Settings: React.FC = () => {
                 {/* Mode Toggle Section */}
                 <section className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
                     <div>
-                        <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100">Dark Mode</h2>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Switch between light and dark appearance.</p>
+                        <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100">{t.darkMode}</h2>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{t.darkModeDesc}</p>
                     </div>
                     <button
                         onClick={toggleMode}
@@ -182,7 +182,7 @@ const Settings: React.FC = () => {
 
                 {/* Theme Selection Section */}
                 <section>
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">Appearance Theme</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">{t.appearanceTheme}</h2>
                     <div className="grid grid-cols-1 gap-4">
                         {(Object.keys(themes) as Theme[]).map((themeKey) => {
                             const theme = themes[themeKey];
@@ -252,10 +252,10 @@ const Settings: React.FC = () => {
 
                 {/* SOS Configuration Section */}
                 <section>
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">SOS Configuration</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">{t.sosConfig}</h2>
                     <div className="bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 rounded-xl p-5 space-y-4">
                         <div>
-                            <label className="text-xs font-bold text-slate-500 uppercase">Voice Trigger Phrase</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase">{t.voiceTrigger}</label>
                             <div className="flex gap-2 mt-1.5">
                                 <input
                                     type="text"
@@ -304,7 +304,7 @@ const Settings: React.FC = () => {
                         </div>
 
                         <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
-                            <label className="text-xs font-bold text-slate-500 uppercase">Helper Mail</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase">{t.emergencyContact}</label>
                             <input
                                 type="email"
                                 value={emergencyEmail}
@@ -364,8 +364,8 @@ const Settings: React.FC = () => {
                                 <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 group-hover:text-red-500">logout</span>
                             </div>
                             <div className="flex-1">
-                                <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Log Out</h3>
-                                <p className="text-xs text-slate-500">Sign out of your account</p>
+                                <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">{t.signOut}</h3>
+                                <p className="text-xs text-slate-500">{t.signOutDesc}</p>
                             </div>
                             <span className="material-symbols-outlined text-slate-400 text-lg">chevron_right</span>
                         </button>

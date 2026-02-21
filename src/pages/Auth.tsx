@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Auth: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useLanguage();
     // Default to 'public' if not accessed from RoleSelection
     const role = (location.state as { role: 'public' | 'official' })?.role || 'public';
 
@@ -97,12 +99,12 @@ const Auth: React.FC = () => {
                         <img src="/logo.png" alt="SafeHer India Logo" className="w-full h-full object-contain drop-shadow-lg" />
                     </div>
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
-                        {isLoginMode ? 'Welcome Back' : 'Secure Access'}
+                        {isLoginMode ? t.welcomeBack : t.secureAccess}
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 text-center text-sm leading-relaxed max-w-[280px]">
                         {isLoginMode
-                            ? `Log in to your ${role} account.`
-                            : `Create your ${role} digital safety account.`
+                            ? (role === 'official' ? t.loginToOfficial : t.loginToPublic)
+                            : `${t.createAccount} - ${role}`
                         }
                     </p>
                 </div>
@@ -120,7 +122,7 @@ const Auth: React.FC = () => {
                     {/* Full Name Input (Only for Signup) */}
                     {!isLoginMode && (
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Full Name</label>
+                            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">{t.fullName}</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <span className="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">person</span>
@@ -128,7 +130,7 @@ const Auth: React.FC = () => {
                                 <input
                                     type="text"
                                     className="block w-full pl-11 pr-4 py-4 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                                    placeholder="Enter your legal name"
+                                    placeholder={t.enterLegalName}
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     required={!isLoginMode}
@@ -139,7 +141,7 @@ const Auth: React.FC = () => {
 
                     {/* Email Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Email Address</label>
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">{t.emailAddress}</label>
                         <div className="relative group">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <span className="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">alternate_email</span>
@@ -157,7 +159,7 @@ const Auth: React.FC = () => {
 
                     {/* Password Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Password</label>
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">{t.password}</label>
                         <div className="relative group">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <span className="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">lock</span>
@@ -165,7 +167,7 @@ const Auth: React.FC = () => {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 className="block w-full pl-11 pr-12 py-4 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                                placeholder="Min. 8 characters"
+                                placeholder={t.minChars}
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 required
@@ -194,7 +196,7 @@ const Auth: React.FC = () => {
                                 <span className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                             ) : (
                                 <>
-                                    <span>{isLoginMode ? 'Log In' : 'Create Account'}</span>
+                                    <span>{isLoginMode ? t.logIn : t.createAccount}</span>
                                     <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
                                 </>
                             )}
@@ -205,18 +207,18 @@ const Auth: React.FC = () => {
                 {/* Secondary Actions */}
                 <div className="mt-8 flex flex-col items-center gap-4">
                     <p className="text-slate-500 dark:text-slate-400 text-sm">
-                        {isLoginMode ? "Don't have an account?" : "Already have an account?"}
+                        {isLoginMode ? t.noAccount : t.haveAccount}
                         <button
                             type="button"
                             onClick={() => setIsLoginMode(!isLoginMode)}
                             className="text-primary font-bold hover:underline ml-1"
                         >
-                            {isLoginMode ? "Create Account" : "Log In"}
+                            {isLoginMode ? t.createAccount : t.logIn}
                         </button>
                     </p>
                     <div className="flex items-center gap-4 w-full py-4">
                         <div className="h-[1px] flex-1 bg-slate-200 dark:bg-slate-800"></div>
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Or Secure with</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t.orSecureWith}</span>
                         <div className="h-[1px] flex-1 bg-slate-200 dark:bg-slate-800"></div>
                     </div>
                     <div className="grid grid-cols-2 gap-4 w-full">
@@ -234,7 +236,7 @@ const Auth: React.FC = () => {
                 {/* Footer Info */}
                 <footer className="mt-auto pt-10 text-center">
                     <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed px-4">
-                        By signing up, you agree to our <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>. Your data is processed in accordance with national cyber security standards.
+                        {t.termsText}
                     </p>
                     <div className="mt-6 flex justify-center gap-6 grayscale opacity-50">
                         <span className="material-symbols-outlined text-2xl" title="ISO Certified">verified_user</span>
