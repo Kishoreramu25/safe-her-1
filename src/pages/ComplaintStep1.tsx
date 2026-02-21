@@ -30,37 +30,61 @@ const ComplaintStep1: React.FC = () => {
         try {
             const uploadedUrls: string[] = [];
 
-            // 1. Upload files to Supabase Storage
-            for (const file of files) {
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Math.random()}.${fileExt}`;
-                const filePath = `${fileName}`;
+            // 1. Check if user is logged in (Storage usually requires auth)
+            const { data: { user } } = await (supabase.auth as any).getUser();
 
-                const { error: uploadError } = await supabase.storage
-                    .from('evidence')
-                    .upload(filePath, file);
+            if (!user) {
+                console.warn('User not authenticated. Proceeding without evidence upload.');
+                // Proceed anyway as requested by user ("let it go further procedure")
+            } else if (files.length > 0) {
+                // 2. Upload files to Supabase Storage
+                for (const file of files) {
+                    try {
+                        const fileExt = file.name.split('.').pop();
+                        const fileName = `${Math.random()}.${fileExt}`;
+                        const filePath = `${fileName}`;
 
-                if (uploadError) throw uploadError;
+                        const { error: uploadError } = await supabase.storage
+                            .from('evidence')
+                            .upload(filePath, file);
 
-                const { data: { publicUrl } } = supabase.storage
-                    .from('evidence')
-                    .getPublicUrl(filePath);
+                        if (uploadError) {
+                            console.error('Storage error:', uploadError);
+                            // Don't throw, just log and continue with other files or proceeding
+                            continue;
+                        }
 
-                uploadedUrls.push(publicUrl);
+                        const { data: { publicUrl } } = supabase.storage
+                            .from('evidence')
+                            .getPublicUrl(filePath);
+
+                        uploadedUrls.push(publicUrl);
+                    } catch (err) {
+                        console.error('Individual file upload failed:', err);
+                    }
+                }
             }
 
-            // 2. Save Step 1 data to session storage
+            // 3. Save Step 1 data to session storage
             const step1Data = {
                 platforms: selectedPlatforms,
                 category: category,
-                evidence_count: files.length,
+                evidence_count: uploadedUrls.length,
                 evidence_urls: uploadedUrls
             };
             sessionStorage.setItem('report_step_1', JSON.stringify(step1Data));
             navigate('/report/step2');
         } catch (error: any) {
-            console.error('File upload failed:', error);
-            alert(`Upload failed: ${error.message || 'Please ensure you have created an "evidence" bucket in Supabase.'}`);
+            console.error('Step 1 processing failed:', error);
+            // If it's a "Failed to fetch" or other network error, we still navigate if requested
+            const step1Data = {
+                platforms: selectedPlatforms,
+                category: category,
+                evidence_count: 0,
+                evidence_urls: []
+            };
+            sessionStorage.setItem('report_step_1', JSON.stringify(step1Data));
+            navigate('/report/step2');
         } finally {
             setLoading(false);
         }

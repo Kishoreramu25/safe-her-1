@@ -101,13 +101,13 @@ const ComplaintStep2: React.FC = () => {
                                 {selectedPlatforms.map((platform) => (
                                     <div key={platform} className="space-y-1.5">
                                         <label className="text-xs font-semibold capitalize text-slate-500 dark:text-slate-400 ml-1">
-                                            {platform} Profile/Post Link <span className="text-red-500">*</span>
+                                            {platform === 'other' ? 'Platform Name' : `${platform} Name / Handle / Link`} <span className="text-red-500">*</span>
                                         </label>
                                         <input
-                                            type="url"
+                                            type="text"
                                             required
                                             className="w-full bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary text-sm h-11 px-3"
-                                            placeholder={`https://www.${platform}.com/...`}
+                                            placeholder={platform === 'other' ? 'e.g. Telegram, Twitter, etc.' : `e.g. @username or Link from ${platform}`}
                                             value={platformLinks[platform] || ''}
                                             onChange={(e) => setPlatformLinks({ ...platformLinks, [platform]: e.target.value })}
                                         />

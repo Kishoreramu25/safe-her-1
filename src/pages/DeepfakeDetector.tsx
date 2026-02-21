@@ -47,8 +47,12 @@ const DeepfakeDetector: React.FC = () => {
             const data = await response.json();
             setResult(data);
         } catch (err: any) {
-            console.error(err);
-            setError(err.message || 'An error occurred during analysis.');
+            console.error('Deepfake analysis error:', err);
+            if (err.message.includes('Failed to fetch')) {
+                setError('Could not connect to the AI analysis server. Please ensure the Python backend (api.py) is running on port 5000.');
+            } else {
+                setError(err.message || 'An error occurred during analysis.');
+            }
         } finally {
             setLoading(false);
         }
